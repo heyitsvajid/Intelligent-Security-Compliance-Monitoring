@@ -1,6 +1,8 @@
 const logger = require('../config/logger');
+const Model = require('../model/resultObject.js');
 const AwsService = require('../utility/awsService.js');
 const fileName = "Controller: ";
+const AWS = require('aws-sdk')
 
 /**
  * Ping API to check status of server.
@@ -28,13 +30,19 @@ exports.unusedAmis = function(req, res) {
     let log = logger.getLogger(fileName + 'unusedAmis API')
     log.info("Started: ")
     log.info("Request Data: " + JSON.stringify(req.body))
+    let resultObject = new Model.ResultObject();
 
-    AwsService.getAllEc2Info(function(err, listOfEc2Description) {
+
+    const creds = new AWS.Credentials({
+    accessKeyId: 'ADD_YOUR_KEY_HERE', secretAccessKey: 'ADD_SECRET_HERE', sessionToken: null
+    });
+
+    AwsService.getAllEc2InstanceInfo(creds, function(err, listOfEc2Description) {
         if (err) {
-            log.error("Error Calling AwsService.getAllEc2Info: " + JSON.stringify(err));
-            res.status(400).json({
-                message: "Internal server error"
-            });
+            log.error("Error Calling AwsService.getAllEc2InstanceInfo: " + JSON.stringify(err));
+            resultObject.success = false
+            resultObject.errorMessage = err.message
+            res.status(400).json(resultObject);
             return
         }
         let usedAmiIds = []
@@ -43,26 +51,28 @@ exports.unusedAmis = function(req, res) {
         }
         log.info("Used Ami Ids List: " + JSON.stringify(usedAmiIds));
 
-        AwsService.getAllAmiIds(function(err, allAmiIds) {
+        AwsService.getAllAmiInfo(creds, function(err, allAmiIds) {
             if (err) {
                 log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
-                res.status(400).json({
-                    message: "Internal server error"
-                });
+                resultObject.success = false
+                resultObject.errorMessage = err.message
+                res.status(400).json(resultObject);
                 return
             }
             log.info("All Ami Ids List: " + JSON.stringify(allAmiIds));
             let result = []
             for (var j = 0; j < allAmiIds.length; j++) {
-                if (!usedAmiIds.includes(allAmiIds[j])) {
-                    result.push(allAmiIds[j]);
+                if (!usedAmiIds.includes(allAmiIds[j].ImageId)) {
+                    result.push(allAmiIds[j]
+                        );
                 }
             }
-            res.status(200).json({
-                unusedAmiIds: result
-            });
-
-
+            resultObject.success = true
+            let data = {
+                unusedAmis : result
+            }
+            resultObject.data = data
+            res.status(200).json(resultObject);
         })
 
 

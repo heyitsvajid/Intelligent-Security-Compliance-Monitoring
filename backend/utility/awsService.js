@@ -3,15 +3,13 @@ AWS.config.update({ region: 'us-west-1' })
 const logger = require('../config/logger')
 const fileName = 'awsService: '
 
-exports.getAllAmiIds = function (callback) {
+exports.getAllAmiInfo = function (creds, callback) {
     let log = logger.getLogger(fileName + 'getAllAmis')
     log.info("Started")
 
-//    const cred = new AWS.Credentials("AKIAJSU3YKGFHJVNNJNA", "ErUrgelecqGVozdxlABQb4GRGTNGS56ZUGht3zd4l");
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJSU3YKGFHJVNNJNA', secretAccessKey: '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', sessionToken: null
-    });
     const ec2Client = new AWS.EC2({"credentials": creds});
+
+    //Get only self images.
     var params = {
         Owners: [
             "self"
@@ -23,26 +21,17 @@ exports.getAllAmiIds = function (callback) {
             callback(err,null)
             return
         }
-        let listOfImageIds = []
         let images = response.Images;
-        log.info("describeImages response: " + JSON.stringify(images))
-        for(let i=0;i<images.length;i++){
-            listOfImageIds.push(images[i].ImageId)
-        }
-        log.info("Returning with list: " + JSON.stringify(listOfImageIds))
-        callback(null,listOfImageIds)
+        log.info("Returning with list: " + JSON.stringify(images))
+        callback(null,images)
     })
 }
 
 
-exports.getAllEc2Info = function (callback) {
+exports.getAllEc2InstanceInfo = function (creds, callback) {
     let log = logger.getLogger(fileName + 'getAllEc2Info API')
     log.info("Started")
 
-//    const cred = new AWS.Credentials("AKIAJSU3YKGFHJVNNJNA", "ErUrgelecqGVozdxlABQb4GRGTNGS56ZUGht3zd4l");
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJSU3YKGFHJVNNJNA', secretAccessKey: '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', sessionToken: null
-    });
     const ec2Client = new AWS.EC2({"credentials": creds});
     ec2Client.describeInstances({}, function (err, data) {
         if (err) {
