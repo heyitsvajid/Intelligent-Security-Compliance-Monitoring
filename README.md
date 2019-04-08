@@ -60,3 +60,9 @@ PS: Use JSON.stringify(object) to log an object along with string message.
    data: JSON
    }
    ```
+
+## 📝 Author
+##### Vajid Kagdi <kbd> [Github](https://github.com/heyitsvajid) / [LinkedIn](https://www.linkedin.com/in/heyitsvajid) / [E-Mail](mailto:vajid9@gmail.com)</kbd>
+##### Madhukar BS 
+##### Sai Kumar 
+##### Akshat Shah
