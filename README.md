@@ -5,6 +5,12 @@ conventional security is not enough. Center of Internet Security (CIS), a non-pr
 
    We are planning to cover CIS benchmarks for AWS, research for more potholes in the AWS services and provide the user with comprehensive suggestions for securing their cloud resources. We plan to achieve this by implementing automated review systems to generate reports for the failed compliances, delineating to a layman the reason and the suggestion to meet compliances and improve security. Example: In AWS Simple Storage Service, the files stored in the bucket should not have read permissions as public.  
 
+
+## System Design
+
+* [Link to System Design](https://github.com/heyitsvajid/Intelligent-Security-Compliance-Monitoring/blob/master/diagrams/System%20Design.jpg)
+<img src="https://github.com/heyitsvajid/Intelligent-Security-Compliance-Monitoring/blob/master/diagrams/System%20Design.jpg" />
+
 ## Backend Project Structure
 
 
