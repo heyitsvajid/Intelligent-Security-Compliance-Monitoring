@@ -6,10 +6,10 @@ module.exports = function (app) {
   app.get('/ping', controller.ping);
 
   //Unused AMIs
-  app.post('/unusedAmis', controller.unusedAmis);
+  app.post('/ec2/unusedAmis', controller.unusedAmis);
 
   //Underutilized Instances
-  app.post('/underutilizedInstances', controller.underutilizedInstances);
+  app.post('/ec2/underutilizedInstances', controller.underutilizedInstances);
 
 }
 
