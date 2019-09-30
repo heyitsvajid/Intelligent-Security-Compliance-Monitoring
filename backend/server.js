@@ -32,7 +32,7 @@ app.use(function (req, res, next) {
 });
 
 //Router Configuration
-require('./routes/routes.js')(app);
+require('./routes/ec2Routes.js')(app);
 
 //Starts the server and listens for requests
 app.listen(port, function () {
