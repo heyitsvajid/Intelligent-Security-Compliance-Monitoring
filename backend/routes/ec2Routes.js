@@ -17,6 +17,9 @@ module.exports = function (app) {
   //Unrestricted SG attached to EC2 instance
   app.post('/ec2/unrestrictedSecurityGroupAttachedEC2Instance', controller.unrestrictedSecurityGroupAttachedEC2Instance);
 
+  //UnAssociated Elastic Ips 
+  app.post('/ec2/unAssociatedEIPs', controller.unAssociatedEIPs);
+
 }
 
 

@@ -131,3 +131,21 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
         callback(null,unrestrictedSecurityGroups)
     })
 }
+
+exports.describeAddresses=function(creds,callback){
+    let log = logger.getLogger(fileName + 'getAllUnrestrictedSecurityGroup API')
+    log.info("Started")
+
+    const ec2Client = new AWS.EC2({"credentials": creds});
+    const params={
+    };
+
+    ec2Client.describeAddresses(params,function(err,listAddressDescription){
+        if (err) {
+            log.error("Error Calling describeSecurityGroups: " + JSON.stringify(err));
+            callback(err,null)
+            return
+        }
+    callback(null,listAddressDescription.Addresses);
+    })
+}

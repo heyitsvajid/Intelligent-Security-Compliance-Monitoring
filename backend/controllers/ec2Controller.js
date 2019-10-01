@@ -74,12 +74,7 @@ exports.unusedAmis = function(req, res) {
             resultObject.data = data
             res.status(200).json(resultObject);
         })
-
-
-
     })
-
-
 }
 
 /**
@@ -208,12 +203,7 @@ exports.unEncryptedAMIS = function(req, res) {
             resultObject.data = data
             res.status(200).json(resultObject);
         })
-
-
-
     })
-
-
 }
 
 
@@ -270,10 +260,48 @@ exports.unrestrictedSecurityGroupAttachedEC2Instance = function(req, res) {
             resultObject.data = data
             res.status(200).json(resultObject);
         })
-
-
-
     })
+}
 
+/**
+ * Servive:EC2
+ * API to check UnAssociated Elastic Ips.
+ * 
+ * @param accountId
+ * @param accountKey 
+ * 
+ * @returns List of unused instances.
+ */
+exports.unAssociatedEIPs = function(req, res) {
+    let log = logger.getLogger(fileName + 'UnAssociated EIPs API')
+    log.info("Started: ")
+    log.info("Request Data: " + JSON.stringify(req.body))
+    let resultObject = new Model.ResultObject();
+    
+    const creds = new AWS.Credentials({
+    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
+    });
 
+    AwsService.describeAddresses(creds,function(err,listOfAddressDescription){
+        if (err) {
+            log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
+            resultObject.success = false
+            resultObject.errorMessage = err.message
+            res.status(400).json(resultObject);
+            return
+        }
+        log.info("All Ami Ids List: " + JSON.stringify(listOfAddressDescription));
+        let unAssociatedEIPs=[];
+        for(let i=0;i<listOfAddressDescription.length;i++){
+            if(!listOfAddressDescription[i].AssociationId) {
+                unAssociatedEIPs.push(listOfAddressDescription[i].PublicIp);
+            }
+        }
+        resultObject.success = true
+            let data = {
+                listOfUnAssociatedAddress : unAssociatedEIPs
+            }
+            resultObject.data = data
+            res.status(200).json(resultObject);
+    })
 }
