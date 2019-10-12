@@ -74,3 +74,5 @@ typings/
 
 # FuseBox cache
 .fusebox/
+backend/log/log.json
+backend/controllers/Vajid Work Status.txt
