@@ -2,7 +2,10 @@ const logger = require('../config/logger');
 const Model = require('../model/resultObject.js');
 const AwsService = require('../utility/ec2AwsService.js');
 const fileName = "Controller: ";
-const AWS = require('aws-sdk')
+const AWS = require('aws-sdk');
+const creds = new AWS.Credentials({
+    accessKeyId: 'Your Access Key Id', secretAccessKey: 'Your Secret access Key', sessionToken: null
+    });
 
 /**
  * Ping API to check status of server.
@@ -31,11 +34,6 @@ exports.unusedAmis = function(req, res) {
     log.info("Started: ")
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
-
-
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
-    });
 
     AwsService.getAllEc2InstanceInfo(creds, function(err, listOfEc2Description) {
         if (err) {
@@ -92,10 +90,6 @@ exports.underutilizedInstances = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
-
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
-    });
         let underUtilizedInstances=[];
         getUnderUtilizedInstances(creds,underUtilizedInstances,function(err,underUtilizedInstancesList) {
             if (err) {
@@ -159,11 +153,6 @@ exports.unEncryptedAMIS = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
-
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
-    });
-
     AwsService.getAllEc2InstanceInfo(creds, function(err, listOfEc2Description) {
         if (err) {
             log.error("Error Calling AwsService.getAllEc2InstanceInfo: " + JSON.stringify(err));
@@ -222,11 +211,6 @@ exports.unrestrictedSecurityGroupAttachedEC2Instance = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
-
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
-    });
-
     AwsService.getAllEc2InstanceInfo(creds, function(err, listOfEc2Description) {
         if (err) {
             log.error("Error Calling AwsService.getAllEc2InstanceInfo: " + JSON.stringify(err));
@@ -277,10 +261,6 @@ exports.unAssociatedEIPs = function(req, res) {
     log.info("Started: ")
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
-    
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
-    });
 
     AwsService.describeAddresses(creds,function(err,listOfAddressDescription){
         if (err) {
@@ -309,7 +289,7 @@ exports.unAssociatedEIPs = function(req, res) {
 
 /**
  * Servive:EC2
- * API to check UnAssociated Elastic Ips.
+ * API to check unusedEc2KeyPairs.
  * 
  * @param accountId
  * @param accountKey 
@@ -322,9 +302,7 @@ exports.unusedEc2KeyPairs = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
     
-    const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
-    });
+    
     const ec2Client = new AWS.EC2({"credentials": creds});
     ec2Client.describeKeyPairs({},function(err,listOfKeyPairs){
         if (err) {
@@ -334,7 +312,7 @@ exports.unusedEc2KeyPairs = function(req, res) {
             res.status(400).json(resultObject);
             return
         }
-        //log.info("All unused Ec2 Key Pairs List: " + JSON.stringify(listOfKeyPairs));
+        log.info("All unused Ec2 Key Pairs List: " + JSON.stringify(listOfKeyPairs));
         let unUsedEc2KeyPairs=[];
         let keyPairsList=listOfKeyPairs.KeyPairs;
         console.log(keyPairsList);
