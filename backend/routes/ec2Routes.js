@@ -20,6 +20,8 @@ module.exports = function (app) {
   //UnAssociated Elastic Ips 
   app.post('/ec2/unAssociatedEIPs', controller.unAssociatedEIPs);
 
+  app.post('/ec2/unusedEc2KeyPairs',controller.unusedEc2KeyPairs);
+
 }
 
 

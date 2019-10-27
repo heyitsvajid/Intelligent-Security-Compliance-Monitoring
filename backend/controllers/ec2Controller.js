@@ -305,3 +305,47 @@ exports.unAssociatedEIPs = function(req, res) {
             res.status(200).json(resultObject);
     })
 }
+
+
+/**
+ * Servive:EC2
+ * API to check UnAssociated Elastic Ips.
+ * 
+ * @param accountId
+ * @param accountKey 
+ * 
+ * @returns List of unused instances.
+ */
+exports.unusedEc2KeyPairs = function(req, res) {
+    let log = logger.getLogger(fileName + 'Unused Ec2 Key Pairs');
+    log.info("Started: ")
+    log.info("Request Data: " + JSON.stringify(req.body))
+    let resultObject = new Model.ResultObject();
+    
+    const creds = new AWS.Credentials({
+    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
+    });
+    const ec2Client = new AWS.EC2({"credentials": creds});
+    ec2Client.describeKeyPairs({},function(err,listOfKeyPairs){
+        if (err) {
+            log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
+            resultObject.success = false
+            resultObject.errorMessage = err.message
+            res.status(400).json(resultObject);
+            return
+        }
+        //log.info("All unused Ec2 Key Pairs List: " + JSON.stringify(listOfKeyPairs));
+        let unUsedEc2KeyPairs=[];
+        let keyPairsList=listOfKeyPairs.KeyPairs;
+        console.log(keyPairsList);
+        for(let i=0;i<keyPairsList.length;i++){
+            unUsedEc2KeyPairs.push(keyPairsList[i].KeyName);
+        }
+        resultObject.success = true
+            let data = {
+                UnusedEc2keyPairsList : unUsedEc2KeyPairs
+            }
+            resultObject.data = data
+            res.status(200).json(resultObject);
+    })
+}
