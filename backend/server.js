@@ -33,7 +33,7 @@ app.use(function (req, res, next) {
 
 //Router Configuration
 require('./routes/ec2Routes.js')(app);
-
+require('./routes/iamRoutes')(app);
 //Starts the server and listens for requests
 app.listen(port, function () {
   console.log(`API running on port ${port}`);
