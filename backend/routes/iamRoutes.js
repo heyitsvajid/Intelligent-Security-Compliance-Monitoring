@@ -12,6 +12,9 @@ module.exports = function (app) {
 
     //Iam Users with Admin Access
     app.post('/iam/iamUserswithPolicyEditAccess', iamController.iamUserswithPolicyEditAccess);
+
+    //Unused Iam Users
+    app.post('/iam/unusedIamUsers', iamController.unusedIamUsers);
   
   }
   

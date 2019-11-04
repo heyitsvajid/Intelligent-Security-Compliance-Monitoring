@@ -236,3 +236,69 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
         })
     })
 }
+
+/**
+ * Servive:IAM
+ * API to check Unused IAM Users.
+ * 
+ * @param accountId
+ * @param accountKey 
+ * 
+ * @returns List of Unused IAM Users
+ */
+
+exports.unusedIamUsers = function(req, res) {
+    let log = logger.getLogger(fileName + 'Unused IAM Users Check API')
+    log.info("Started: ")
+    log.info("Request Data: " + JSON.stringify(req.body))
+    let resultObject = new Model.ResultObject();
+
+    AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
+        if (err) {
+            log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
+            resultObject.success = false
+            resultObject.errorMessage = err.message
+            res.status(400).json(resultObject);
+            return
+        }
+        log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsers));
+        let listOfIAMUsersWithKeyMoreThan90DaysOld=[];
+        for(let i=0;i<listOfIAMUsers.length;i++){
+            let CreatedDate=new Date(listOfIAMUsers[i].CreateDate);
+            let currentDate=new Date();
+            if(Math.round((currentDate-CreatedDate)/(60*60*24))>90)
+            listOfIAMUsersWithKeyMoreThan90DaysOld.push(listOfIAMUsers[i].UserName);
+        }
+        let listOfUnusedIAMUsers=new Set();
+        const promises = [];
+        for(let i=0;i<listOfIAMUsersWithKeyMoreThan90DaysOld.length;i++){
+            let userName=listOfIAMUsersWithKeyMoreThan90DaysOld[i];
+            promises.push(new Promise(resolve=>AwsService.getAllAccessKeys(creds,userName,function(err,data){
+                let obj={
+                    userName:userName,
+                    details:data 
+                }
+            resolve(obj)
+        })));
+        }
+        Promise.all(promises)
+        .then(data => {
+            for(let j=0;j<data.length;j++){
+                let detail=data[j].details
+                let accessKeyMetadata=detail.AccessKeyMetadata
+                    if(accessKeyMetadata.length==0){
+                     listOfUnusedIAMUsers.add(data[j].userName)    
+                    }
+            }
+            return Array.from(listOfUnusedIAMUsers);
+        })
+        .then(returnData => {
+            resultObject.success = true
+            let data = {
+                listOfUnusedIAMUsers : returnData
+            }
+            resultObject.data = data
+            res.status(200).json(resultObject);
+        })
+    })
+}
