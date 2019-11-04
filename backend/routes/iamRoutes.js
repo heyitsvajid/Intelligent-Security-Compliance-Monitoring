@@ -15,6 +15,9 @@ module.exports = function (app) {
 
     //Unused Iam Users
     app.post('/iam/unusedIamUsers', iamController.unusedIamUsers);
+
+    //90 days SSH Public Key Rotation Check API
+    app.post('/iam/sshKeyRotationCheck', iamController.sshKeyRotationCheck);
   
   }
   

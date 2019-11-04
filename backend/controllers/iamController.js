@@ -49,8 +49,6 @@ exports.keyRotationCheck = function(req, res) {
     })
 }
 
-
-
 /**
  * Servive:IAM
  * API to check Unnecessary Access Keys.
@@ -302,3 +300,68 @@ exports.unusedIamUsers = function(req, res) {
         })
     })
 }
+
+/**
+ * Servive:IAM
+ * API to check keyRotationCheck.
+ * 
+ * @param accountId
+ * @param accountKey 
+ * 
+ * @returns List of IAM users with key not rotated for 90 days.
+ */
+exports.sshKeyRotationCheck = function(req, res) {
+    let log = logger.getLogger(fileName + 'IAM keyRotation CheckAPI')
+    log.info("Started: ")
+    log.info("Request Data: " + JSON.stringify(req.body))
+    let resultObject = new Model.ResultObject();
+
+    AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
+        if (err) {
+            log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
+            resultObject.success = false
+            resultObject.errorMessage = err.message
+            res.status(400).json(resultObject);
+            return
+        }
+        let listOfUsersWithSSHRotationKeyMoreThan90Days=new Set();
+        const promises = [];
+        for(let i=0;i<listOfIAMUsers.length;i++){
+            let userName=listOfIAMUsers[i].UserName;
+            promises.push(new Promise(resolve=>AwsService.getAllSSHAccessKeys(creds,userName,function(err,data){
+                let obj={
+                    userName:userName,
+                    details:data 
+                }
+            resolve(obj)
+        })));
+        }
+        Promise.all(promises)
+        .then(data => {
+            for(let j=0;j<data.length;j++){
+                let detail=data[j].details;
+                let sshPublicKeys=detail.SSHPublicKeys;
+                if(sshPublicKeys.length==0){
+                    listOfUsersWithSSHRotationKeyMoreThan90Days.add(data[j].userName);
+                    continue
+                }
+                for(let i=0;i<sshPublicKeys.length;i++){
+                    let CreatedDate=new Date(sshPublicKeys[i].CreateDate);
+                    let currentDate=new Date();
+                    if(Math.round((currentDate-CreatedDate)/(60*60*24))>90)
+                    listOfUsersWithSSHRotationKeyMoreThan90Days.add(data[j].userName);
+                }
+            }
+            return Array.from(listOfUsersWithSSHRotationKeyMoreThan90Days);
+        })
+        .then(returnData => {
+            resultObject.success = true
+            let data = {
+                listOfUsersWithSSHRotationKeyMoreThan90Days : returnData
+            }
+            resultObject.data = data
+            res.status(200).json(resultObject);
+        })
+    })
+}
+

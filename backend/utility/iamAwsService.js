@@ -63,3 +63,21 @@ exports.getAllAttachedPolicies=function(creds,userName,callback){
         })      
         
     };
+    
+exports.getAllSSHAccessKeys=function(creds,userName,callback){
+    let log = logger.getLogger(fileName + '')
+    log.info("Started")
+    const iamClient = new AWS.IAM({"credentials": creds}); 
+        let params={
+            UserName:userName
+        }
+        iamClient.listSSHPublicKeys(params,function(err,data){
+            if (err){
+                log.error("Error Calling Listing Users: " + JSON.stringify(err));
+                callback(err,null)
+                return
+            } 
+            callback(null,data); 
+        })      
+        
+    };
