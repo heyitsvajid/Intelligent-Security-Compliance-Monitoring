@@ -117,21 +117,17 @@ const getUnderUtilizedInstances=(creds,underUtilizedInstances,callback)=>{
             callback(err)
             return
         }
-        //let underUtilizedInstances=[];
         for (var i = 0; i < listOfEc2Description.length; i++) {
             let instanceId=listOfEc2Description[i].InstanceId
             AwsService.getMetricsStatistics(creds,instanceId,function(err, response){
                 if(err){
                     console.log(err);
                 }
-                
                 if(response<=60) {
-                    //console.log(instanceId)
                     underUtilizedInstances.push(instanceId);
                 }
             })
         }
-        console.log(underUtilizedInstances)
         callback(null,underUtilizedInstances);
 })
     
