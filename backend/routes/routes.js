@@ -2,6 +2,8 @@ module.exports = function (app) {
 
   var controller = require('../controllers/controller.js');
   let cloudTrailController = require('../controllers/cloudTrailController');
+  let elbController = require('../controllers/elbController');
+  let kmsController = require('../controllers/kmsController');
 
   //Ping Server
   app.get('/ping', controller.ping);
@@ -35,6 +37,27 @@ module.exports = function (app) {
 
   //Check whether Log File Integrity Validation is enabled for trails
   app.get('/checkLogFileIntegrityValidation', cloudTrailController.checkLogFileIntegrityValidation);
+
+  //Check the security protocol of ELB listeners
+  app.get('/checkElbListenerSecurity', elbController.checkElbListenerSecurity);
+
+  //Check the health of ELB targets
+  app.get('/checkElbHealth', elbController.checkElbHealth);
+
+  //Check for Idle ELBs
+  app.get('/checkIdleElbs', elbController.checkIdleElbs);
+
+  //Check for insecure Security Groups linked to ELBs
+  app.get('/checkElbSecurityGroup', elbController.checkElbSecurityGroup);
+
+  //Check for internet facing ELBs
+  app.get('/checkInternetFacingElbs', elbController.checkInternetFacingElbs);
+
+  //Check whether delete protection is enabled for ELBs
+  app.get('/checkElbDeleteProtection', elbController.checkElbDeleteProtection);
+
+  //Check for publicly exposed keys
+  app.get('/checkExposedKeys', kmsController.checkExposedKeys);
 
 }
 
