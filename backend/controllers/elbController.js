@@ -2,12 +2,16 @@ const logger = require('../config/logger');
 const Model = require('../model/resultObject.js');
 const fileName = "ElbController: ";
 const ElbService = require('../utility/elbService');
-const appConfig = require('../config/appConfig');
-const credentials = appConfig.getCredentials();
+const AWS = require('aws-sdk');
 
 exports.checkElbListenerSecurity = (req, res) => {
     let log = logger.getLogger(fileName + 'checkListenerSecurity API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     ElbService.getAllElbsInfo(credentials, (err, data) => {
         if (err) {
@@ -46,8 +50,8 @@ exports.checkElbListenerSecurity = (req, res) => {
                         if (count === applicationElbs.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                secure: secureListeners,
-                                insecure: insecureListeners
+                                success: secureListeners,
+                                failure: insecureListeners
                             };
                             res.status(200).json(resultObject);
                         }
@@ -61,6 +65,11 @@ exports.checkElbListenerSecurity = (req, res) => {
 exports.checkElbHealth = (req, res) => {
     let log = logger.getLogger(fileName + 'checkElbHealth API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     ElbService.getAllTargetGroups(credentials, (err, data) => {
         if (err) {
@@ -93,8 +102,8 @@ exports.checkElbHealth = (req, res) => {
                         if (count === targetGroupList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                healthyInstances: healthyInstanceList,
-                                unhealthyInstances: unhealthyInstanceList
+                                success: healthyInstanceList,
+                                failure: unhealthyInstanceList
                             };
                             res.status(200).json(resultObject);
                         }
@@ -108,6 +117,11 @@ exports.checkElbHealth = (req, res) => {
 exports.checkIdleElbs = (req, res) => {
     let log = logger.getLogger(fileName + 'checkIdleElbs API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     ElbService.getAllElbsInfo(credentials, (err, data) => {
         if (err) {
@@ -155,8 +169,8 @@ exports.checkIdleElbs = (req, res) => {
                         if (count === elbList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                idleElbs: idleElbList,
-                                nonIdleElbs: nonIdleElbList
+                                failure: idleElbList,
+                                success: nonIdleElbList
                             };
                             res.status(200).json(resultObject);
                         }
@@ -170,6 +184,11 @@ exports.checkIdleElbs = (req, res) => {
 exports.checkElbSecurityGroup = (req, res) => {
     let log = logger.getLogger(fileName + 'checkElbSecurityGroup API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     ElbService.getAllElbsInfo(credentials, (err, data) => {
         if (err) {
@@ -220,8 +239,8 @@ exports.checkElbSecurityGroup = (req, res) => {
                             if (elbCount === elbList.length && sgCount === securityGroupList.length) {
                                 resultObject.success = true;
                                 resultObject.data = {
-                                    secureGroups: Array.from(secureGroupList),
-                                    insecureGroups: Array.from(insecureGroupList)
+                                    success: Array.from(secureGroupList),
+                                    failure: Array.from(insecureGroupList)
                                 };
                                 res.status(200).json(resultObject);
                             }
@@ -236,6 +255,11 @@ exports.checkElbSecurityGroup = (req, res) => {
 exports.checkInternetFacingElbs = (req, res) => {
     let log = logger.getLogger(fileName + 'checkInternetFacingElbs API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     ElbService.getAllElbsInfo(credentials, (err, data) => {
         if (err) {
@@ -254,8 +278,8 @@ exports.checkInternetFacingElbs = (req, res) => {
             });
             resultObject.success = true;
             resultObject.data = {
-                internetFacingElbs: internetFacingElbList,
-                internalElbs: internalElbList
+                failure: internetFacingElbList,
+                success: internalElbList
             };
             res.status(200).json(resultObject);
         }
@@ -265,6 +289,11 @@ exports.checkInternetFacingElbs = (req, res) => {
 exports.checkElbDeleteProtection = (req, res) => {
     let log = logger.getLogger(fileName + 'checkElbDeleteProtection API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     ElbService.getAllElbsInfo(credentials, (err, data) => {
         if (err) {
@@ -297,8 +326,8 @@ exports.checkElbDeleteProtection = (req, res) => {
                         if (elbCount === elbList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                deleteProtectionEnabled: deleteProtectionEnabledList,
-                                deleteProtectionDisabled: deleteProtectionDisabledList
+                                success: deleteProtectionEnabledList,
+                                failure: deleteProtectionDisabledList
                             };
                             res.status(200).json(resultObject);
                         }

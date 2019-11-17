@@ -2,12 +2,16 @@ const logger = require('../config/logger');
 const Model = require('../model/resultObject.js');
 const fileName = "KmsController: ";
 const KmsService = require('../utility/kmsService');
-const appConfig = require('../config/appConfig');
-const credentials = appConfig.getCredentials();
+const AWS = require('aws-sdk');
 
 exports.checkExposedKeys = (req, res) => {
     let log = logger.getLogger(fileName + 'checkExposedKeys API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     KmsService.getAllKeys(credentials, (err, data) => {
         if (err) {
@@ -47,8 +51,8 @@ exports.checkExposedKeys = (req, res) => {
                             if (keyCount === keyList.length && statementCount === statementList.length) {
                                 resultObject.success = true;
                                 resultObject.data = {
-                                    exposedKeys: Array.from(exposedKeyList),
-                                    nonExposedKeys: Array.from(nonExposedKeyList)
+                                    failure: Array.from(exposedKeyList),
+                                    success: Array.from(nonExposedKeyList)
                                 };
                                 res.status(200).json(resultObject);
                             }

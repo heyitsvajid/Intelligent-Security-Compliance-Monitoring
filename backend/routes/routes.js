@@ -14,50 +14,47 @@ module.exports = function (app) {
   //Underutilized Instances
   app.post('/underutilizedInstances', controller.underutilizedInstances);
 
-  //Get Status of a cloud trail
-  app.post('/getTrailStatus', cloudTrailController.getTrailStatus);
-
   //Describe all the trails in account
-  app.get('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
-
-  //Check File Encryption status for all the trails in the account
-  app.get('/checkLogFileEncryption', cloudTrailController.checkLogFileEncryption);
+  app.post('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
 
   //Check access logging status for s3 buckets linked to trails
-  app.get('/checkAccessLoggingForBuckets', cloudTrailController.checkAccessLoggingForBuckets);
+  app.post('/checkAccessLoggingForBuckets', cloudTrailController.checkAccessLoggingForBuckets);
 
   //Check MFA delete status for s3 buckets linked to trails
-  app.get('/checkMfaDeleteForBuckets', cloudTrailController.checkMfaDeleteForBuckets);
+  app.post('/checkMfaDeleteForBuckets', cloudTrailController.checkMfaDeleteForBuckets);
 
   //Check for publicly accessible buckets linked to trails
-  app.get('/checkInsecureBuckets', cloudTrailController.checkInsecureBuckets);
+  app.post('/checkInsecureBuckets', cloudTrailController.checkInsecureBuckets);
+
+  //Check File Encryption status for all the trails in the account
+  app.post('/checkLogFileEncryption', cloudTrailController.checkLogFileEncryption);
 
   //Check whether the trails are enabled for multiple regions
-  app.get('/checkMultiRegionAccess', cloudTrailController.checkMultiRegionAccess);
+  app.post('/checkMultiRegionAccess', cloudTrailController.checkMultiRegionAccess);
 
   //Check whether Log File Integrity Validation is enabled for trails
-  app.get('/checkLogFileIntegrityValidation', cloudTrailController.checkLogFileIntegrityValidation);
+  app.post('/checkLogFileIntegrityValidation', cloudTrailController.checkLogFileIntegrityValidation);
 
   //Check the security protocol of ELB listeners
-  app.get('/checkElbListenerSecurity', elbController.checkElbListenerSecurity);
+  app.post('/checkElbListenerSecurity', elbController.checkElbListenerSecurity);
 
   //Check the health of ELB targets
-  app.get('/checkElbHealth', elbController.checkElbHealth);
+  app.post('/checkElbHealth', elbController.checkElbHealth);
 
   //Check for Idle ELBs
-  app.get('/checkIdleElbs', elbController.checkIdleElbs);
+  app.post('/checkIdleElbs', elbController.checkIdleElbs);
 
   //Check for insecure Security Groups linked to ELBs
-  app.get('/checkElbSecurityGroup', elbController.checkElbSecurityGroup);
+  app.post('/checkElbSecurityGroup', elbController.checkElbSecurityGroup);
 
   //Check for internet facing ELBs
-  app.get('/checkInternetFacingElbs', elbController.checkInternetFacingElbs);
+  app.post('/checkInternetFacingElbs', elbController.checkInternetFacingElbs);
 
   //Check whether delete protection is enabled for ELBs
-  app.get('/checkElbDeleteProtection', elbController.checkElbDeleteProtection);
+  app.post('/checkElbDeleteProtection', elbController.checkElbDeleteProtection);
 
   //Check for publicly exposed keys
-  app.get('/checkExposedKeys', kmsController.checkExposedKeys);
+  app.post('/checkExposedKeys', kmsController.checkExposedKeys);
 
 }
 
