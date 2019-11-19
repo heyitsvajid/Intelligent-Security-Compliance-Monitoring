@@ -68,15 +68,16 @@ exports.getAllS3BucketsEncryption = function (creds, bucketList, callback) {
     log.info("Started with list:"+ JSON.stringify(bucketList))
 
     Promise.all(
-        bucketList.map(bucket => getBucketEncryption(creds ,bucket.Name)),)
+        bucketList.map(bucket => getBucketEncryption(creds ,bucket.Name)))
         .then(data => {
           callback(null, data)
         })
         .catch(error => {
+            log.error(error)
             return   callback('Error fetching Encryptions.', null)
         })
-
 }
+
 
 
 function getBucketEncryption(creds, bucketName){
@@ -97,6 +98,20 @@ function getBucketEncryption(creds, bucketName){
             resolve({[bucketName]:bucketEncryption})
         })
     })
+}
+
+exports.getAllS3BucketsCustomerEncryption = function (creds, bucketList, callback) {
+    let log = logger.getLogger(fileName + 'getAllS3BucketsEncryption')
+    log.info("Started with list:"+ JSON.stringify(bucketList))
+
+    Promise.all(
+        bucketList.map(bucket => getBucketEncryption(creds ,bucket.Name)),)
+        .then(data => {
+          callback(null, data)
+        })
+        .catch(error => {
+            return   callback('Error fetching Encryptions.', null)
+        })
 }
 
 exports.getAllS3BucketsVersioning = function (creds, bucketList, callback) {
@@ -137,6 +152,86 @@ function getBucketVersioning(creds, bucketName){
             resolve({
                 [bucketName] : 'Disabled'
             })
+        })
+    })
+}
+
+
+exports.getAllS3BucketsPolicy = function (creds, bucketList, callback) {
+    let log = logger.getLogger(fileName + 'getAllS3BucketsPolicy')
+    log.info("Started with list:"+ JSON.stringify(bucketList))
+
+    Promise.all(
+        bucketList.map(bucket => getBucketPolicy(creds ,bucket.Name)))
+        .then(data => {
+          callback(null, data)
+        })
+        .catch(error => {
+            return   callback('Error fetching Policies->' + JSON.stringify(error), null)
+        })
+
+}
+
+function getBucketLogging(creds, bucketName){
+    let log = logger.getLogger(fileName + 'getBucketLogging')
+    log.info("Started with name:"+ JSON.stringify(bucketName))
+
+    return new Promise((resolve, reject) => {
+        const s3Client = new AWS.S3({"credentials": creds});
+        var params = {
+            Bucket: bucketName /* required */
+          };
+        s3Client.getBucketLogging(params, (err, bucketLogging) => {
+            if (err){
+                log.error("No Logging Enabled for Bucket: " + bucketName);
+                return reject({
+                    [bucketName] : err
+                }) 
+            }    
+            log.info("Returning with Logging for: "+ bucketName + "-->" + JSON.stringify(bucketLogging))
+                return resolve({
+                    [bucketName] : bucketLogging
+                })                
+        })
+    })
+}
+
+
+exports.getAllS3BucketsLogging = function (creds, bucketList, callback) {
+    let log = logger.getLogger(fileName + 'getAllS3BucketsLogging')
+    log.info("Started with list:"+ JSON.stringify(bucketList))
+
+    Promise.all(
+        bucketList.map(bucket => getBucketLogging(creds ,bucket.Name)))
+        .then(data => {
+          callback(null, data)
+        })
+        .catch(error => {
+            return   callback('Error fetching Logging->' + JSON.stringify(error), null)
+        })
+
+}
+
+function getBucketPolicy(creds, bucketName){
+    let log = logger.getLogger(fileName + 'getBucketPolicy')
+    log.info("Started with name:"+ JSON.stringify(bucketName))
+
+    return new Promise((resolve, reject) => {
+        const s3Client = new AWS.S3({"credentials": creds});
+        var params = {
+            Bucket: bucketName /* required */
+          };
+        s3Client.getBucketPolicy(params, (err, bucketPolicy) => {
+            if (err){
+                log.error("No Policy for Bucket: " + bucketName);
+                return resolve({
+                    [bucketName] : err
+                }) 
+            }    
+            log.info("Returning with Policy for: "+ bucketName + "-->" + JSON.stringify(bucketPolicy))
+                return resolve({
+                    [bucketName] : bucketPolicy
+                })                
         })
     })
 }
