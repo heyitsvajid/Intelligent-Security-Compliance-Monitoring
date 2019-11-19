@@ -29,11 +29,6 @@
     padding: 5px 0;
   }
   
-  nav.navbar.navbar-expand.navbar-light.bg-white.fixed-fixed{
-    background-color: #2698da !important;
-    color: white;
-  }
-  
   .header-btn{
     color: white !important;
   }
