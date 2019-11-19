@@ -14,7 +14,11 @@
     "winston": "^3.2.1"
   },
   "nodemonConfig": {
-    "ignore": ["log/*", "test/*", "docs/*"]
+    "ignore": [
+      "log/*",
+      "test/*",
+      "docs/*"
+    ]
   },
   "scripts": {
     "start": "nodemon server.js",

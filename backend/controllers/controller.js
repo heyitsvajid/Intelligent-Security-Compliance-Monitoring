@@ -3,7 +3,7 @@ const Model = require('../model/resultObject.js');
 const AwsService = require('../utility/awsService.js');
 const fileName = "Controller: ";
 const AWS = require('aws-sdk')
-
+ 
 /**
  * Ping API to check status of server.
  *  
@@ -34,9 +34,9 @@ exports.unusedAmis = function(req, res) {
 
 
     const creds = new AWS.Credentials({
-    accessKeyId: 'ADD_YOUR_KEY_HERE', secretAccessKey: 'ADD_SECRET_HERE', sessionToken: null
+    accessKeyId: process.env.AWSAccessKeyId, secretAccessKey: process.env.AWSSecretKey, sessionToken: null
     });
-
+    
     AwsService.getAllEc2InstanceInfo(creds, function(err, listOfEc2Description) {
         if (err) {
             log.error("Error Calling AwsService.getAllEc2InstanceInfo: " + JSON.stringify(err));
@@ -60,26 +60,25 @@ exports.unusedAmis = function(req, res) {
                 return
             }
             log.info("All Ami Ids List: " + JSON.stringify(allAmiIds));
-            let result = []
+            let failed = []
+            let success = []
             for (var j = 0; j < allAmiIds.length; j++) {
                 if (!usedAmiIds.includes(allAmiIds[j].ImageId)) {
-                    result.push(allAmiIds[j]
-                        );
+                    failed.push(allAmiIds[j]);
+                }else{
+                    success.push(allAmiIds[j])
                 }
             }
             resultObject.success = true
             let data = {
-                unusedAmis : result
+                amis: allAmiIds,
+                failed,
+                success
             }
             resultObject.data = data
             res.status(200).json(resultObject);
         })
-
-
-
     })
-
-
 }
 
 /**
