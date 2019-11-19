@@ -23,6 +23,7 @@ class RuleTable extends React.Component {
     }
 
     generateTable = () => {
+      debugger
         let data = this.state
         if(data.title && data.headers.length > 0 && data.rows.length > 0){
          
@@ -32,7 +33,13 @@ class RuleTable extends React.Component {
 
             let tableRows = data.rows.map((row, index) => {
                 let rowData =  row.map((key, i) => {
-                    return <td key={i}>{key}</td>
+                    if(key === 'PASS'){
+                      return <td style={{color:'green'}} key={i}>{key}</td>
+                    }else if(key === 'FAIL'){
+                      return <td  style={{color:'red'}} key={i}>{key}</td>
+                    }else{
+                      return <td key={i}>{key}</td>
+                    }
                  })
                 return (
                    <tr key={index}>
@@ -42,9 +49,6 @@ class RuleTable extends React.Component {
              }) 
             return (
                 <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">{data.title}</CardTitle>
-                </CardHeader>
                 <Table striped>
                   <thead>
                     <tr>

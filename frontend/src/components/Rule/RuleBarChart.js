@@ -41,7 +41,7 @@ export default class RuleBarChart extends PureComponent {
             <Bar dataKey="passed" fill="green" />
             <Bar dataKey="failed" fill="red" />
           </BarChart>
-          : "No Data Available"}
+          : ""}
 </div>
     );
   }
