@@ -60,12 +60,31 @@ class ComplainceReport extends React.Component {
       s3FullControlAccessHeader:[], 
       s3BucketEncryptionChartData: [],
       s3BucketEncryptionData: {},
-      s3BucketEncryptionHeader:[]
+      s3BucketEncryptionHeader:[],
+      s3BucketMfaDeleteChartData: [],
+      s3BucketMfaDeleteData: {},
+      s3BucketMfaDeleteHeader:[],
+      s3PublicAccessChartData: [],
+      s3PublicAccessData: {},
+      s3PublicAccessHeader:[],
+      s3BucketCustomerEncryptionChartData: [],
+      s3BucketCustomerEncryptionData: {},
+      s3BucketCustomerEncryptionHeader:[],
+      s3LimitByIpAccessChartData: [],
+      s3LimitByIpAccessData: {},
+      s3LimitByIpAccessHeader:[],  
+      s3BucketLoggingChartData: [],
+      s3BucketLoggingData: {},
+      s3BucketLoggingHeader:[],           
     };
 
-    this.s3FullControlAccess(authUser)
-    this.s3BucketEncryption(authUser)
-    this.s3FullControlAccess = this.s3FullControlAccess.bind(this)
+    this.s3FullControlAccess()
+    this.s3BucketEncryption()
+    this.s3BucketMfaDelete()
+    this.s3PublicAccess()
+    this.s3BucketCustomerEncryption()
+    this.s3LimitByIpAccess()    
+    this.s3BucketLogging()
     this.openService = this.openService.bind(this)
   }
 
@@ -134,6 +153,85 @@ s3BucketEncryption() {
   })
 }
 
+s3BucketMfaDelete() {
+  API.s3BucketMfaDelete(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketEncryption")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3BucketMfaDeleteChartData:chartData,
+            s3BucketMfaDeleteData:tableData,
+            s3BucketMfaDeleteHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3PublicAccess() {
+  API.s3PublicAccess(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3PublicAccess")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3PublicAccessChartData:chartData,
+            s3PublicAccessData:tableData,
+            s3PublicAccessHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3BucketCustomerEncryption() {
+  API.s3BucketCustomerEncryption(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketCustomerEncryption")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3BucketCustomerEncryptionChartData:chartData,
+            s3BucketCustomerEncryptionData:tableData,
+            s3BucketCustomerEncryptionHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3LimitByIpAccess() {
+  API.s3LimitByIpAccess(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketCustomerEncryption")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3LimitByIpAccessChartData:chartData,
+            s3LimitByIpAccessData:tableData,
+            s3LimitByIpAccessHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3BucketLogging() {
+  API.s3BucketLogging(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketLogging")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3BucketLoggingChartData:chartData,
+            s3BucketLoggingData:tableData,
+            s3BucketLoggingHeader:header
+          })
+        })
+      }
+  })
+}
   render = () => {
     return (
               <Container fluid className="p-0">
@@ -162,7 +260,7 @@ s3BucketEncryption() {
                         tableHeaders={this.state.s3FullControlAccessHeader}
                         tableTitle={"S3 Full Control Access"} 
                         tableData={this.state.s3FullControlAccessData} /> 
-                        : "Service not in use."
+                        : "No data available for rule."
                   }
                   </div>
                   <div  id="s3BucketEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
@@ -172,9 +270,60 @@ s3BucketEncryption() {
                         tableHeaders={this.state.s3BucketEncryptionHeader}
                         tableTitle={"S3 Bucket Encryption"} 
                         tableData={this.state.s3BucketEncryptionData} /> 
-                        : "Service not in use."
+                        : "No data available for rule."
                   }
                   </div>
+                  <div  id="s3BucketMfaDelete" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.s3BucketMfaDeleteData.length > 0 ?
+                        <Rule chartData={this.state.s3BucketMfaDeleteChartData} 
+                        tableHeaders={this.state.s3BucketMfaDeleteHeader}
+                        tableTitle={"S3 Bucket Mfa Delete"} 
+                        tableData={this.state.s3BucketMfaDeleteData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>
+                  <div  id="s3PublicAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.s3PublicAccessData.length > 0 ?
+                        <Rule chartData={this.state.s3PublicAccessChartData} 
+                        tableHeaders={this.state.s3PublicAccessHeader}
+                        tableTitle={"S3 Public Access"} 
+                        tableData={this.state.s3PublicAccessData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>
+                  <div  id="s3BucketCustomerEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.s3BucketCustomerEncryptionData.length > 0 ?
+                        <Rule chartData={this.state.s3BucketCustomerEncryptionChartData} 
+                        tableHeaders={this.state.s3BucketCustomerEncryptionHeader}
+                        tableTitle={"S3 Bucket Customer Encryption"} 
+                        tableData={this.state.s3BucketCustomerEncryptionData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>
+                  <div  id="s3LimitByIpAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.s3LimitByIpAccessData.length > 0 ?
+                        <Rule chartData={this.state.s3LimitByIpAccessChartData} 
+                        tableHeaders={this.state.s3LimitByIpAccessHeader}
+                        tableTitle={"S3 Limit By Ip Access"} 
+                        tableData={this.state.s3LimitByIpAccessData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>         
+                  <div  id="s3BucketLogging" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.s3BucketLoggingData.length > 0 ?
+                        <Rule chartData={this.state.s3BucketLoggingChartData} 
+                        tableHeaders={this.state.s3BucketLoggingHeader}
+                        tableTitle={"S3 Bucket Logging"} 
+                        tableData={this.state.s3BucketLoggingData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>                  
+                  
                   </Fade>
                   <hr/>
                   </div>         

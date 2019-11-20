@@ -144,7 +144,7 @@ exports.s3BucketEncryption = function(req, res) {
  * @returns List of failed and success bucket names for this rule.
  */
 exports.s3BucketMfaDelete = function(req, res) {
-    let log = logger.getLogger(fileName + 's3BucketEncryption API')
+    let log = logger.getLogger(fileName + 's3BucketMfaDelete API')
     log.info("Started: ")
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
@@ -172,9 +172,24 @@ exports.s3BucketMfaDelete = function(req, res) {
                 return
             }
         log.info("Buckets Without MFA/Versioning: " + JSON.stringify(bucketVersioning));
+        let failed = []
+        let passed = []
+        for(let i = 0; i<bucketVersioning.length; i++){
+            let bucketNames =  Object.keys(bucketVersioning[i])
+            log.info("Bucket Names: " + JSON.stringify(bucketNames));
+            if(bucketNames.length > 0){
+                if(bucketVersioning[i][bucketNames[0]].toLowerCase() === "enabled" ){
+                    passed.push(bucketNames[0])
+                }else{
+                    failed.push(bucketNames[0])
+                }
+            }
+        }    
         resultObject.success = true
         let data = {
-            bucketVersioning
+            bucketList,
+            passed,
+            failed
         }
         resultObject.data = data
         res.status(200).json(resultObject);    
@@ -220,25 +235,26 @@ exports.s3PublicAccess = function(req, res) {
                 return
             }
         log.info("All Bucket Acl: " + JSON.stringify(bucketAcl));
-        let failedBucketsName = [];
-        let passedBucketsName = [];
+        let failed = [];
+        let passed = [];
         let PERMISSIONS = ['WRITE', 'FULL_CONTROL', 'READ_ACP', 'WRITE_ACP', 'READ']
         for(let i = 0; i<bucketAcl.length; i++){
             let ALL_USER_URI = 'http://acs.amazonaws.com/groups/global/AllUsers';
             let grants = bucketAcl[i]["Grants"]
             for(let j = 0; j<grants.length; j++){
-                if(grants[j]["Grantee"]["URI"] === ALL_USER_URI && PERMISSIONS.includes(grants[j]["Permission"]) && !failedBucketsName.includes(bucketAcl[i].Name)){
-                    failedBucketsName.push(bucketAcl[i].Name)
+                if(grants[j]["Grantee"]["URI"] === ALL_USER_URI && PERMISSIONS.includes(grants[j]["Permission"]) && !failed.includes(bucketAcl[i].Name)){
+                    failed.push(bucketAcl[i].Name)
                 }
             }
-            if(!failedBucketsName.includes(bucketAcl[i].Name))
-                passedBucketsName.push(bucketAcl[i].Name)
+            if(!failed.includes(bucketAcl[i].Name))
+                passed.push(bucketAcl[i].Name)
 
         }
         resultObject.success = true
         let data = {
-            failedBucketsName,
-            passedBucketsName
+            bucketList,
+            failed,
+            passed
          }
          resultObject.data = data
         res.status(200).json(resultObject);
@@ -284,26 +300,28 @@ exports.s3BucketCustomerEncryption = function(req, res) {
                 return
             }
         log.info("Buckets Encryption: " + JSON.stringify(bucketEncryption));
-        let failedBucketsName = [];
-        let passedBucketsName = [];
+        let failed = [];
+        let passed = [];
 
         for(let i = 0; i< bucketEncryption.length; i++){
 
             let bucketEncryptionInfo = bucketEncryption[i]
             let keys = Object.keys(bucketEncryptionInfo)
             let bucketName = keys[0]
-            if(JSON.stringify(bucketEncryptionInfo).includes("AES256")){
-                failedBucketsName.push(bucketName)
+            if(JSON.stringify(bucketEncryptionInfo).includes("AES256") || 
+            JSON.stringify(bucketEncryptionInfo).includes("null")){
+                failed.push(bucketName)
             }else{
-                passedBucketsName.push(bucketName)
+                passed.push(bucketName)
             }
         }
 
 
         resultObject.success = true
         let data = {
-            failedBucketsName,
-            passedBucketsName
+            bucketList,
+            failed,
+            passed
         }
         resultObject.data = data
         res.status(200).json(resultObject);
@@ -351,21 +369,20 @@ exports.s3LimitByIpAccess = function(req, res) {
                 return
             }
         log.info("All Bucket Acl: " + JSON.stringify(bucketPolicies));
-        let failedBucketsName = [];
-        let passedBucketsName = [];
+        let failed = [];
+        let passed = [];
         for(let i = 0; i<bucketPolicies.length; i++){
-
             if(JSON.stringify(bucketPolicies[i]).includes("NoSuchBucketPolicy")){
-                failedBucketsName.push(Object.keys(bucketPolicies[i])[0])
+                failed.push(Object.keys(bucketPolicies[i])[0])
             }else{
-                passedBucketsName.push(Object.keys(bucketPolicies[i])[0])
+                passed.push(Object.keys(bucketPolicies[i])[0])
             }
-
         }
         resultObject.success = true
         let data = {
-            failedBucketsName,
-            passedBucketsName
+            bucketList,
+            failed,
+            passed
          }
          resultObject.data = data
         res.status(200).json(resultObject);
@@ -412,24 +429,24 @@ exports.s3BucketLogging = function(req, res) {
                 return
             }
         log.info("All Bucket Logging: " + JSON.stringify(bucketLogging));
-        let failedBucketsName = [];
-        let passedBucketsName = [];
+        let failed = [];
+        let passed = [];
         for(let i = 0; i<bucketLogging.length; i++){
 
             if(!JSON.stringify(bucketLogging[i]).includes("LoggingEnabled")){
-                failedBucketsName.push(Object.keys(bucketLogging[i])[0])
+                failed.push(Object.keys(bucketLogging[i])[0])
             }else{
-                passedBucketsName.push(Object.keys(bucketLogging[i])[0])
+                passed.push(Object.keys(bucketLogging[i])[0])
             }
         }
         resultObject.success = true
         let data = {
-            bucketLogging,
-            failedBucketsName,
-            passedBucketsName
+            bucketList,
+            failed,
+            passed
          }
          resultObject.data = data
-        res.status(200).json(resultObject);
+         res.status(200).json(resultObject);
     })
     })    
 }

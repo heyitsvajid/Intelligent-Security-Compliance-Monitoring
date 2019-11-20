@@ -1,8 +1,6 @@
 import React from "react";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   Table
 } from "reactstrap";
 
@@ -23,7 +21,6 @@ class RuleTable extends React.Component {
     }
 
     generateTable = () => {
-      debugger
         let data = this.state
         if(data.title && data.headers.length > 0 && data.rows.length > 0){
          
