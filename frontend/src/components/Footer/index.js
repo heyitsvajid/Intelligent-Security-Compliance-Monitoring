@@ -7,7 +7,7 @@ const Footer = () => (
       <Row className="text-muted">
         <Col xs="6" className="text-left">
           <ul className="list-inline">
-            <li className="list-inline-item">
+            {/* <li className="list-inline-item">
               <span className="text-muted" href="#">
                 <a href="mailto:help@freewill.com">Support</a>
               </span>
@@ -26,7 +26,7 @@ const Footer = () => (
               <span className="text-muted" href="#">
               <a href="/terms">Terms of Service</a>
               </span>
-            </li>
+            </li> */}
           </ul>
         </Col>
         <Col xs="6" className="text-right">

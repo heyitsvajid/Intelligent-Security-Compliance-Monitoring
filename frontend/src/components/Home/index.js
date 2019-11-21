@@ -52,9 +52,9 @@ class ComplainceReport extends React.Component {
     let authUser = this.props.authUser
 
     this.state = {
-      "s3": false,
-      "name": authUser ? authUser.name : "",
-      "authUser": authUser,
+      s3: false,
+      name: authUser ? authUser.name : "",
+      authUser: authUser,
       s3FullControlAccessChartData: [],
       s3FullControlAccessData: {},
       s3FullControlAccessHeader:[], 
@@ -76,6 +76,19 @@ class ComplainceReport extends React.Component {
       s3BucketLoggingChartData: [],
       s3BucketLoggingData: {},
       s3BucketLoggingHeader:[],           
+      rds:false,
+      rdsAutomatedBackupChartData: [],
+      rdsAutomatedBackupData: {},
+      rdsAutomatedBackupHeader:[],    
+      rdsDeletionProtectionChartData: [],
+      rdsDeletionProtectionData: {},
+      rdsDeletionProtectionHeader:[],                 
+      rdsEncryptionChartData: [],
+      rdsEncryptionData: {},
+      rdsEncryptionHeader:[],                 
+      rdsIAMAuthenticationChartData: [],
+      rdsIAMAuthenticationData: {},
+      rdsIAMAuthenticationHeader:[],                       
     };
 
     this.s3FullControlAccess()
@@ -85,6 +98,11 @@ class ComplainceReport extends React.Component {
     this.s3BucketCustomerEncryption()
     this.s3LimitByIpAccess()    
     this.s3BucketLogging()
+    this.rdsAutomatedBackup()
+    this.rdsDeletionProtection()
+    this.rdsEncryption()
+    this.rdsIAMAuthentication()
+    
     this.openService = this.openService.bind(this)
   }
 
@@ -95,6 +113,10 @@ class ComplainceReport extends React.Component {
                 s3:!this.state.s3
             }) 
         break    
+        case 2:
+          this.setState({
+              rds:!this.state.rds
+          }) 
     }
 }
 
@@ -119,6 +141,70 @@ getDataFromResponse(response, callback){
   }
   let chartData = [{ name: 'Buckets', passed: passedCount, failed: failedCount}]
   callback(header, tableData, chartData)
+}
+
+rdsIAMAuthentication() {
+  API.rdsIAMAuthentication(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsIAMAuthenticationChartData:chartData,
+            rdsIAMAuthenticationData:tableData,
+            rdsIAMAuthenticationHeader:header
+          })
+        })
+      }
+  })
+}
+
+rdsEncryption() {
+  API.rdsEncryption(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsEncryptionChartData:chartData,
+            rdsEncryptionData:tableData,
+            rdsEncryptionHeader:header
+          })
+        })
+      }
+  })
+}
+
+rdsDeletionProtection() {
+  API.rdsDeletionProtection(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsDeletionProtectionChartData:chartData,
+            rdsDeletionProtectionData:tableData,
+            rdsDeletionProtectionHeader:header
+          })
+        })
+      }
+  })
+}
+
+rdsAutomatedBackup() {
+  API.rdsAutomatedBackup(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsAutomatedBackupChartData:chartData,
+            rdsAutomatedBackupData:tableData,
+            rdsAutomatedBackupHeader:header
+          })
+        })
+      }
+  })
 }
 
 s3FullControlAccess() {
@@ -322,10 +408,55 @@ s3BucketLogging() {
                         tableData={this.state.s3BucketLoggingData} /> 
                         : "No data available for rule."
                   }
-                  </div>                  
-                  
+                  </div>                                    
                   </Fade>
                   <hr/>
+                  <Row onClick={this.openService.bind(this,2)}>
+                      <Col md="11"><h4><b>Relational Database Service (RDS)</b></h4></Col>
+                      <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.rds ? faMinusSquare: faPlusSquare}/></Col>
+                  </Row>
+                  <Fade>
+                  <div  id="rdsAutomatedBackup" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.rdsAutomatedBackupData.length > 0 ?
+                        <Rule chartData={this.state.rdsAutomatedBackupChartData} 
+                        tableHeaders={this.state.rdsAutomatedBackupHeader}
+                        tableTitle={"RDS Automated Backup"} 
+                        tableData={this.state.rdsAutomatedBackupData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>
+                  <div  id="rdsDeletionProtection" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.rdsDeletionProtectionData.length > 0 ?
+                        <Rule chartData={this.state.rdsDeletionProtectionChartData} 
+                        tableHeaders={this.state.rdsDeletionProtectionHeader}
+                        tableTitle={"RDS Deletion Protection"} 
+                        tableData={this.state.rdsDeletionProtectionData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>
+                  <div  id="rdsEncryption" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.rdsEncryptionData.length > 0 ?
+                        <Rule chartData={this.state.rdsEncryptionChartData} 
+                        tableHeaders={this.state.rdsEncryptionHeader}
+                        tableTitle={"RDS Encryption"} 
+                        tableData={this.state.rdsEncryptionData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>
+                  <div  id="rdsIAMAuthentication" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
+                  {
+                        this.state.rdsIAMAuthenticationData.length > 0 ?
+                        <Rule chartData={this.state.rdsIAMAuthenticationChartData} 
+                        tableHeaders={this.state.rdsIAMAuthenticationHeader}
+                        tableTitle={"RDS IAM Authentication"} 
+                        tableData={this.state.rdsIAMAuthenticationData} /> 
+                        : "No data available for rule."
+                  }
+                  </div>                  
+                  </Fade>
                   </div>         
           </CardBody>
         </Card>
