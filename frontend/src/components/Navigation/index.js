@@ -32,12 +32,15 @@ const Navigation = () => (
 
 const NavigationAuth = ({ authUser }) => (
   <Navbar color="white" fixed="fixed" light expand>
-      <Col md="6">
+      <Col md="1">
         <a  href="/">
             <img src={LogoImg} height="50" alt="ISCM AWS"/>
         </a>    
         </Col>
-        <Col md="6" className="mr-2">
+        <Col md="6">
+          <h2 className="mt-1" style={{color:"white"}}>Intelligent Security Compliance Monitoring</h2>
+        </Col>
+        <Col md="5" className="mr-2">
         <Collapse navbar>
         <Nav className="ml-auto" navbar>
             <UncontrolledDropdown nav inNavbar>

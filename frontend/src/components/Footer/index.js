@@ -1,10 +1,8 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
-import Intercom from 'react-intercom';
 
 const Footer = () => (
   <footer className="footer sticky-bottom">
-    <Intercom appID={process.env.REACT_APP_INTERCOM_ID}/>
     <Container fluid>
       <Row className="text-muted">
         <Col xs="6" className="text-left">

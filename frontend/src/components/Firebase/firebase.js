@@ -82,17 +82,20 @@ class Firebase {
           .then(snapshot => {
             const dbUser = snapshot.val();
             
-            let pdfDataEntry = {}
+            let awsAccessKeyId = ""
+            let awsSecretKey = ""
             if(dbUser && dbUser.pdfDataEntry){
-              pdfDataEntry = dbUser.pdfDataEntry
+              awsAccessKeyId = dbUser.awsAccessKeyId
+              awsSecretKey = dbUser.awsSecretKey
             }
             // merge auth and db user
             authUser = {
               uid: authUser.uid,
               email: authUser.email,
-              emailVerified: authUser.emailVerified,
+              emailVerified: true,
               providerData: authUser.providerData,
-              pdfDataEntry: pdfDataEntry,
+              awsSecretKey,
+              awsAccessKeyId
             };
 
             next(authUser);

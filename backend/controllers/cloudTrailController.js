@@ -48,8 +48,8 @@ exports.checkAccessLoggingForBuckets = (req, res) => {
         }
         else {
             let trailList = data;
-            let successList = [];
-            let failureList = [];
+            let passed = [];
+            let failed = [];
             let count = 0;
             //TODO: change this to communicate with s3 service
             trailList.forEach(trail => {
@@ -61,14 +61,15 @@ exports.checkAccessLoggingForBuckets = (req, res) => {
                         res.status(400).json(resultObject);
                     }
                     else {
-                        if (typeof data.LoggingEnabled === "undefined") failureList.push(trail.S3BucketName);
-                        else successList.push(trail.S3BucketName);
+                        if (typeof data.LoggingEnabled === "undefined") failed.push(trail.Name);
+                        else passed.push(trail.Name);
                         count++;
                         if (count === trailList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                success: successList,
-                                failure: failureList
+                                trailList,
+                                passed,
+                                failed
                             };
                             res.status(200).json(resultObject);
                         }
@@ -97,8 +98,8 @@ exports.checkMfaDeleteForBuckets = (req, res) => {
         }
         else {
             let trailList = data;
-            let successList = [];
-            let failureList = [];
+            let passed = [];
+            let failed = [];
             let count = 0;
             //TODO: change this to communicate with s3 service
             trailList.forEach(trail => {
@@ -110,14 +111,15 @@ exports.checkMfaDeleteForBuckets = (req, res) => {
                         res.status(400).json(resultObject);
                     }
                     else {
-                        if (data.MFADelete === "Enabled") successList.push(trail.S3BucketName);
-                        else failureList.push(trail.S3BucketName);
+                        if (data.MFADelete === "Enabled") passed.push(trail.Name);
+                        else failed.push(trail.Name);
                         count++;
                         if (count === trailList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                success: successList,
-                                failure: failureList
+                                trailList,
+                                passed,
+                                failed
                             };
                             res.status(200).json(resultObject);
                         }
@@ -146,8 +148,8 @@ exports.checkInsecureBuckets = (req, res) => {
         }
         else {
             let trailList = data;
-            let secureBucketList = [];
-            let insecureBucketList = [];
+            let passed = [];
+            let failed = [];
             let count = 0;
             //TODO: change this to communicate with s3 service
             trailList.forEach(trail => {
@@ -162,15 +164,16 @@ exports.checkInsecureBuckets = (req, res) => {
                         let grantsList = data.Grants;
                         grantsList.forEach(grantee => {
                             if (grantee.URI === 'http://acs.amazonaws.com/groups/global/AllUsers')
-                                insecureBucketList.push(trail.S3BucketName);
-                            else secureBucketList.push(trail.S3BucketName);
+                                failed.push(trail.S3BucketName);
+                            else if (!passed.includes(trail.S3BucketName)) passed.push(trail.S3BucketName);
                         });
                         count++;
                         if (count === trailList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                success: secureBucketList,
-                                failure: insecureBucketList
+                                trailList,
+                                passed,
+                                failed
                             };
                             res.status(200).json(resultObject);
                         }
@@ -199,16 +202,17 @@ exports.checkLogFileEncryption = (req, res) => {
         }
         else {
             let trailList = data;
-            let encryptedList = [];
-            let unencryptedList = [];
+            let passed = [];
+            let failed = [];
             trailList.forEach(trail => {
-                if (typeof trail.KmsKeyId === "undefined") unencryptedList.push(trail.Name);
-                else encryptedList.push(trail.Name);
+                if (typeof trail.KmsKeyId === "undefined") failed.push(trail.Name);
+                else passed.push(trail.Name);
             });
             resultObject.success = true;
             resultObject.data = {
-                success: encryptedList,
-                failure: unencryptedList
+                trailList,
+                passed,
+                failed
             };
             res.status(200).json(resultObject);
         }
@@ -233,16 +237,17 @@ exports.checkMultiRegionAccess = (req, res) => {
         }
         else {
             let trailList = data;
-            let singleRegionList = [];
-            let multiRegionList = [];
+            let failed = [];
+            let passed = [];
             trailList.forEach(trail => {
-                if (trail.IsMultiRegionTrail === false) singleRegionList.push(trail.Name);
-                else multiRegionList.push(trail.Name);
+                if (trail.IsMultiRegionTrail === false) failed.push(trail.Name);
+                else passed.push(trail.Name);
             });
             resultObject.success = true;
             resultObject.data = {
-                success: multiRegionList,
-                failure: singleRegionList
+                trailList,
+                passed,
+                failed
             };
             res.status(200).json(resultObject);
         }
@@ -267,16 +272,17 @@ exports.checkLogFileIntegrityValidation = (req, res) => {
         }
         else {
             let trailList = data;
-            let validationEnabledList = [];
-            let validationDisabledList = [];
+            let passed = [];
+            let failed = [];
             trailList.forEach(trail => {
-                if (trail.LogFileValidationEnabled === false) validationDisabledList.push(trail.Name);
-                else validationEnabledList.push(trail.Name);
+                if (trail.LogFileValidationEnabled === false) failed.push(trail.Name);
+                else passed.push(trail.Name);
             });
             resultObject.success = true;
             resultObject.data = {
-                success: validationEnabledList,
-                failure: validationDisabledList
+                trailList,
+                passed,
+                failed
             };
             res.status(200).json(resultObject);
         }
