@@ -1,6 +1,7 @@
 module.exports = function (app) {
 
   var controller = require('../controllers/controller.js');
+  var networkController = require('../controllers/networkController');
   var s3Ccontroller = require('../controllers/s3controller.js');
 
   //Ping Server
@@ -12,8 +13,11 @@ module.exports = function (app) {
   //Underutilized Instances
   app.post('/underutilizedInstances', controller.underutilizedInstances);
 
+  //Exposed security groups
+  app.get('/securityGroups', networkController.getAllSecurityGroups);
+
   // AWS S3 Bucket Public 'FULL_CONTROL' Access
-    app.post('/s3FullControlAccess', s3Ccontroller.s3FullControlAccess);
+  app.post('/s3FullControlAccess', s3Ccontroller.s3FullControlAccess);
 
   // AWS S3 Bucket Encryption
   app.post('/s3BucketEncryption', s3Ccontroller.s3BucketEncryption);
