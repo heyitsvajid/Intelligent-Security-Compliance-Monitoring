@@ -27,6 +27,12 @@ class CloudTrailComponent extends React.Component{
 
         this.state = {
             cloudTrail: false,
+            accessLogging: false,
+            mfaDelete: false,
+            insecureBuckets: false,
+            logFileEncryption: false,
+            multiRegion: false,
+            logFileIntegrityValidation: false,
             name: authUser ? authUser.name : "",
             authUser: authUser,
             accessLoggingChartData: [],
@@ -60,10 +66,37 @@ class CloudTrailComponent extends React.Component{
 
     openService(id) {
         switch (id) {
-            case 1:
+            case "accessLogging":
                 this.setState({
-                    cloudTrail: !this.state.cloudTrail
+                    accessLogging: !this.state.accessLogging
                 });
+                break;
+            case "mfaDelete":
+                this.setState({
+                    mfaDelete: !this.state.mfaDelete
+                });
+                break;
+            case "insecureBuckets":
+                this.setState({
+                    insecureBuckets: !this.state.insecureBuckets
+                });
+                break;
+            case "logFileEncryption":
+                this.setState({
+                    logFileEncryption: !this.state.logFileEncryption
+                });
+                break;
+            case "multiRegion":
+                this.setState({
+                    multiRegion: !this.state.multiRegion
+                });
+                break;
+            case "logFileIntegrityValidation":
+                this.setState({
+                    logFileIntegrityValidation: !this.state.logFileIntegrityValidation
+                });
+                break;
+            default:
                 break;
         }
     }
@@ -196,73 +229,124 @@ class CloudTrailComponent extends React.Component{
     render = () => {
         return(
             <div id="cloudTrailComponent">
-                <Row onClick={this.openService.bind(this,1)}>
-                    <Col md="11"><h4><b>{this.props.title}</b></h4></Col>
-                    <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.cloudTrail ? faMinusSquare: faPlusSquare}/></Col>
-                </Row>
-                <Fade>
-                    <div  id="accessLogging" className="mt-3" style={{display: this.state.cloudTrail ? 'block' : 'none',transition: 'display 1s'}}>
-                        {
-                            this.state.accessLoggingData.length > 0 ?
-                                <Rule chartData={this.state.accessLoggingChartData}
-                                      tableHeaders={this.state.accessLoggingHeader}
-                                      tableTitle={"Access Logging for Cloud Trail Buckets"}
-                                      tableData={this.state.accessLoggingData} />
-                                : "Service not in use."
-                        }
-                    </div>
-                    <div  id="mfaDelete" className="mt-3" style={{display: this.state.cloudTrail ? 'block' : 'none',transition: 'display 1s'}}>
-                        {
-                            this.state.mfaDeleteData.length > 0 ?
-                                <Rule chartData={this.state.mfaDeleteChartData}
-                                      tableHeaders={this.state.mfaDeleteHeader}
-                                      tableTitle={"MFA Delete for Cloud Trail Buckets"}
-                                      tableData={this.state.mfaDeleteData} />
-                                : "Service not in use."
-                        }
-                    </div>
-                    <div  id="insecureBuckets" className="mt-3" style={{display: this.state.cloudTrail ? 'block' : 'none',transition: 'display 1s'}}>
-                        {
-                            this.state.insecureBucketsData.length > 0 ?
-                                <Rule chartData={this.state.insecureBucketsChartData}
-                                      tableHeaders={this.state.insecureBucketsHeader}
-                                      tableTitle={"Insecure Buckets for Cloud Trail"}
-                                      tableData={this.state.insecureBucketsData} />
-                                : "Service not in use."
-                        }
-                    </div>
-                    <div  id="logFileEncryption" className="mt-3" style={{display: this.state.cloudTrail ? 'block' : 'none',transition: 'display 1s'}}>
-                        {
-                            this.state.logFileEncryptionData.length > 0 ?
-                                <Rule chartData={this.state.logFileEncryptionChartData}
-                                      tableHeaders={this.state.logFileEncryptionHeader}
-                                      tableTitle={"Log File Encryption for Cloud Trail Buckets"}
-                                      tableData={this.state.logFileEncryptionData} />
-                                : "Service not in use."
-                        }
-                    </div>
-                    <div  id="multiRegion" className="mt-3" style={{display: this.state.cloudTrail ? 'block' : 'none',transition: 'display 1s'}}>
-                        {
-                            this.state.multiRegionData.length > 0 ?
-                                <Rule chartData={this.state.multiRegionChartData}
-                                      tableHeaders={this.state.multiRegionHeader}
-                                      tableTitle={"Multi Region Access for Cloud Trails"}
-                                      tableData={this.state.multiRegionData} />
-                                : "Service not in use."
-                        }
-                    </div>
-                    <div  id="logFileIntegrityValidation" className="mt-3" style={{display: this.state.cloudTrail ? 'block' : 'none',transition: 'display 1s'}}>
-                        {
-                            this.state.logFileIntegrityValidationData.length > 0 ?
-                                <Rule chartData={this.state.logFileIntegrityValidationChartData}
-                                      tableHeaders={this.state.logFileIntegrityValidationHeader}
-                                      tableTitle={"Log File Integrity Validation for Cloud Trails"}
-                                      tableData={this.state.logFileIntegrityValidationData} />
-                                : "Service not in use."
-                        }
-                    </div>
-                </Fade>
-                <hr/>
+                <Card>
+                    <CardHeader>
+                        <Row className="mt-3">
+                            <Col style = {{textAlign: 'center'}}>
+                                <h1 style = {{color: '#2698da ', fontSize: 20}}>Cloud Trail Service</h1>
+                            </Col>
+                        </Row>
+                    </CardHeader>
+                    <CardBody>
+                        <Row onClick={this.openService.bind(this,"accessLogging")} style={{cursor: "pointer"}}>
+                            <Col md="11"><h4><b>Access Logging for Cloud Trail Buckets</b></h4></Col>
+                            <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.accessLogging ? faMinusSquare: faPlusSquare}/></Col>
+                        </Row>
+                        <Fade>
+                            <div  id="accessLogging" className="mt-3" style={{display: this.state.accessLogging ? 'block' : 'none',transition: 'display 1s'}}>
+                                {
+                                    this.state.accessLoggingData.length > 0 ?
+                                        <Rule chartData={this.state.accessLoggingChartData}
+                                              tableHeaders={this.state.accessLoggingHeader}
+                                              tableTitle={"Access Logging for Cloud Trail Buckets"}
+                                              tableData={this.state.accessLoggingData} />
+                                        : "Service not in use."
+                                }
+                            </div>
+                        </Fade>
+                        <hr/>
+
+                        <Row onClick={this.openService.bind(this,"mfaDelete")} style={{cursor: "pointer"}}>
+                            <Col md="11"><h4><b>MFA Delete for Cloud Trail Buckets</b></h4></Col>
+                            <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.mfaDelete ? faMinusSquare: faPlusSquare}/></Col>
+                        </Row>
+                        <Fade>
+                            <div  id="mfaDelete" className="mt-3" style={{display: this.state.mfaDelete ? 'block' : 'none',transition: 'display 1s'}}>
+                                {
+                                    this.state.mfaDeleteData.length > 0 ?
+                                        <Rule chartData={this.state.mfaDeleteChartData}
+                                              tableHeaders={this.state.mfaDeleteHeader}
+                                              tableTitle={"MFA Delete for Cloud Trail Buckets"}
+                                              tableData={this.state.mfaDeleteData} />
+                                        : "Service not in use."
+                                }
+                            </div>
+                        </Fade>
+                        <hr/>
+
+                        <Row onClick={this.openService.bind(this,"insecureBuckets")} style={{cursor: "pointer"}}>
+                            <Col md="11"><h4><b>Insecure Buckets for Cloud Trail</b></h4></Col>
+                            <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.insecureBuckets ? faMinusSquare: faPlusSquare}/></Col>
+                        </Row>
+                        <Fade>
+                            <div  id="insecureBuckets" className="mt-3" style={{display: this.state.insecureBuckets ? 'block' : 'none',transition: 'display 1s'}}>
+                                {
+                                    this.state.insecureBucketsData.length > 0 ?
+                                        <Rule chartData={this.state.insecureBucketsChartData}
+                                              tableHeaders={this.state.insecureBucketsHeader}
+                                              tableTitle={"Insecure Buckets for Cloud Trail"}
+                                              tableData={this.state.insecureBucketsData} />
+                                        : "Service not in use."
+                                }
+                            </div>
+                        </Fade>
+                        <hr/>
+
+                        <Row onClick={this.openService.bind(this,"logFileEncryption")} style={{cursor: "pointer"}}>
+                            <Col md="11"><h4><b>Log File Encryption for Cloud Trail Buckets</b></h4></Col>
+                            <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.logFileEncryption ? faMinusSquare: faPlusSquare}/></Col>
+                        </Row>
+                        <Fade>
+                            <div  id="logFileEncryption" className="mt-3" style={{display: this.state.logFileEncryption ? 'block' : 'none',transition: 'display 1s'}}>
+                                {
+                                    this.state.logFileEncryptionData.length > 0 ?
+                                        <Rule chartData={this.state.logFileEncryptionChartData}
+                                              tableHeaders={this.state.logFileEncryptionHeader}
+                                              tableTitle={"Log File Encryption for Cloud Trail Buckets"}
+                                              tableData={this.state.logFileEncryptionData} />
+                                        : "Service not in use."
+                                }
+                            </div>
+                        </Fade>
+                        <hr/>
+
+                        <Row onClick={this.openService.bind(this,"multiRegion")} style={{cursor: "pointer"}}>
+                            <Col md="11"><h4><b>Multi Region Access for Cloud Trails</b></h4></Col>
+                            <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.multiRegion ? faMinusSquare: faPlusSquare}/></Col>
+                        </Row>
+                        <Fade>
+                            <div  id="multiRegion" className="mt-3" style={{display: this.state.multiRegion ? 'block' : 'none',transition: 'display 1s'}}>
+                                {
+                                    this.state.multiRegionData.length > 0 ?
+                                        <Rule chartData={this.state.multiRegionChartData}
+                                              tableHeaders={this.state.multiRegionHeader}
+                                              tableTitle={"Multi Region Access for Cloud Trails"}
+                                              tableData={this.state.multiRegionData} />
+                                        : "Service not in use."
+                                }
+                            </div>
+                        </Fade>
+                        <hr/>
+
+                        <Row onClick={this.openService.bind(this,"logFileIntegrityValidation")} style={{cursor: "pointer"}}>
+                            <Col md="11"><h4><b>Log File Integrity Validation for Cloud Trails</b></h4></Col>
+                            <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.logFileIntegrityValidation ? faMinusSquare: faPlusSquare}/></Col>
+                        </Row>
+                        <Fade>
+                            <div  id="logFileIntegrityValidation" className="mt-3" style={{display: this.state.logFileIntegrityValidation ? 'block' : 'none',transition: 'display 1s'}}>
+                                {
+                                    this.state.logFileIntegrityValidationData.length > 0 ?
+                                        <Rule chartData={this.state.logFileIntegrityValidationChartData}
+                                              tableHeaders={this.state.logFileIntegrityValidationHeader}
+                                              tableTitle={"Log File Integrity Validation for Cloud Trails"}
+                                              tableData={this.state.logFileIntegrityValidationData} />
+                                        : "Service not in use."
+                                }
+                            </div>
+                        </Fade>
+                        <hr/>
+                    </CardBody>
+                </Card>
             </div>
         );
     }

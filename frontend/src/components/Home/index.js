@@ -18,6 +18,7 @@ import {
     faPlusSquare,
     faMinusSquare
   } from "@fortawesome/free-regular-svg-icons";
+import {Tabs, Tab} from 'react-bootstrap';
 import CloudTrailComponent from "./cloudTrailComponent";
 
 const STATUS_PASSED = "PASS"
@@ -150,46 +151,67 @@ s3BucketEncryption() {
                       </Row>
                     </CardHeader>
                   <CardBody>
-                  <div>
-                  <Row onClick={this.openService.bind(this,1)}>
-                      <Col md="11"><h4><b>Simple Storage Service (S3)</b></h4></Col>
-                      <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.s3 ? faMinusSquare: faPlusSquare}/></Col>
-                  </Row>
-                  <Fade>
-                  <div  id="s3FullControlAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3FullControlAccessData.length > 0 ?
-                        <Rule chartData={this.state.s3FullControlAccessChartData} 
-                        tableHeaders={this.state.s3FullControlAccessHeader}
-                        tableTitle={"S3 Full Control Access"} 
-                        tableData={this.state.s3FullControlAccessData} /> 
-                        : "Service not in use."
-                  }
-                  </div>
-                  <div  id="s3BucketEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3BucketEncryptionData.length > 0 ?
-                        <Rule chartData={this.state.s3BucketEncryptionChartData} 
-                        tableHeaders={this.state.s3BucketEncryptionHeader}
-                        tableTitle={"S3 Bucket Encryption"} 
-                        tableData={this.state.s3BucketEncryptionData} /> 
-                        : "Service not in use."
-                  }
-                  </div>
-                  </Fade>
-                  <hr/>
-                  </div>
-                      <CloudTrailComponent title="Elastic Compute Cloud Service (EC2)"/>
-                      <CloudTrailComponent title="Relational Database Service (RDS)"/>
-                      <CloudTrailComponent title="Cloud Trail Service"/>
-                      <CloudTrailComponent title="Identity and Access Management Service (IAM)"/>
-                      <CloudTrailComponent title="Elastic Load Balancing Service (ELB)"/>
-                      <CloudTrailComponent title="Key Management Service (KMS)"/>
-                      <CloudTrailComponent title="Virtual Private Cloud Service (VPC)"/>
-                      <CloudTrailComponent title="Auto Scaling Service"/>
-          </CardBody>
-        </Card>
-                  </Col>
+                      {/*<div>*/}
+                      {/*<Row onClick={this.openService.bind(this,1)}>*/}
+                      {/*    <Col md="11"><h4><b>Simple Storage Service (S3)</b></h4></Col>*/}
+                      {/*    <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.s3 ? faMinusSquare: faPlusSquare}/></Col>*/}
+                      {/*</Row>*/}
+                      {/*<Fade>*/}
+                      {/*<div  id="s3FullControlAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>*/}
+                      {/*{*/}
+                      {/*      this.state.s3FullControlAccessData.length > 0 ?*/}
+                      {/*      <Rule chartData={this.state.s3FullControlAccessChartData}*/}
+                      {/*      tableHeaders={this.state.s3FullControlAccessHeader}*/}
+                      {/*      tableTitle={"S3 Full Control Access"}*/}
+                      {/*      tableData={this.state.s3FullControlAccessData} />*/}
+                      {/*      : "Service not in use."*/}
+                      {/*}*/}
+                      {/*</div>*/}
+                      {/*<div  id="s3BucketEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>*/}
+                      {/*{*/}
+                      {/*      this.state.s3BucketEncryptionData.length > 0 ?*/}
+                      {/*      <Rule chartData={this.state.s3BucketEncryptionChartData}*/}
+                      {/*      tableHeaders={this.state.s3BucketEncryptionHeader}*/}
+                      {/*      tableTitle={"S3 Bucket Encryption"}*/}
+                      {/*      tableData={this.state.s3BucketEncryptionData} />*/}
+                      {/*      : "Service not in use."*/}
+                      {/*}*/}
+                      {/*</div>*/}
+                      {/*</Fade>*/}
+                      {/*<hr/>*/}
+                      {/*</div>*/}
+                      <Tabs id="tabView" defaultActiveKey="autoScaling">
+                          <Tab title="Auto Scaling" eventKey="autoScaling">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="Cloud Trail" eventKey="cloudTrail">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="EC2" eventKey="ec2">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="ELB" eventKey="elb">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="IAM" eventKey="iam">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="KMS" eventKey="kms">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="RDS" eventKey="rds">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="S3" eventKey="s3">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="VPC" eventKey="vpc">
+                              <CloudTrailComponent/>
+                          </Tab>
+                      </Tabs>
+                  </CardBody>
+                </Card>
+                </Col>
                 <Col md="1"/>
               </Row>
             </Container>
