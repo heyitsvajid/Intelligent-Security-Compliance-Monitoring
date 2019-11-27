@@ -20,6 +20,7 @@ import {
   } from "@fortawesome/free-regular-svg-icons";
 import {Tabs, Tab} from 'react-bootstrap';
 import CloudTrailComponent from "./cloudTrailComponent";
+import ElbComponent from './elbComponent';
 
 const STATUS_PASSED = "PASS"
 const STATUS_FAILED = "FAIL"
@@ -191,7 +192,7 @@ s3BucketEncryption() {
                               <CloudTrailComponent/>
                           </Tab>
                           <Tab title="ELB" eventKey="elb">
-                              <CloudTrailComponent/>
+                              <ElbComponent/>
                           </Tab>
                           <Tab title="IAM" eventKey="iam">
                               <CloudTrailComponent/>

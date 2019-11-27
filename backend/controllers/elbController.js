@@ -23,8 +23,8 @@ exports.checkElbListenerSecurity = (req, res) => {
         else {
             let elbList = data;
             let applicationElbs = [];
-            let insecureListeners = [];
-            let secureListeners = [];
+            let failed = [];
+            let passed = [];
             let params = {};
             elbList.forEach(elb => {
                 if (elb.Type === "application") applicationElbs.push(elb);
@@ -44,14 +44,15 @@ exports.checkElbListenerSecurity = (req, res) => {
                         data.forEach(listener => {
                             if (listener.Protocol === "HTTPS" || listener.Protocol === "SSL") isSecure = true;
                         });
-                        if (isSecure) secureListeners.push(applicationElb.LoadBalancerName);
-                        else insecureListeners.push(applicationElb.LoadBalancerName);
+                        if (isSecure) passed.push(applicationElb.LoadBalancerName);
+                        else failed.push(applicationElb.LoadBalancerName);
                         count++;
                         if (count === applicationElbs.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                success: secureListeners,
-                                failure: insecureListeners
+                                elbList,
+                                passed,
+                                failed
                             };
                             res.status(200).json(resultObject);
                         }
@@ -80,8 +81,8 @@ exports.checkElbHealth = (req, res) => {
         }
         else {
             let targetGroupList = data;
-            let healthyInstanceList = [];
-            let unhealthyInstanceList = [];
+            let passed = [];
+            let failed = [];
             let params = {};
             let count = 0;
             targetGroupList.forEach(targetGroup => {
@@ -95,15 +96,16 @@ exports.checkElbHealth = (req, res) => {
                     }
                     else {
                         data.forEach(target => {
-                            if (target.TargetHealth.State === "healthy") healthyInstanceList.push(target.Target.Id);
-                            else unhealthyInstanceList.push(target.Target.Id);
+                            if (target.TargetHealth.State === "healthy") passed.push(target.Target.Id);
+                            else failed.push(target.Target.Id);
                         });
                         count++;
                         if (count === targetGroupList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                success: healthyInstanceList,
-                                failure: unhealthyInstanceList
+                                elbList: targetGroupList,
+                                passed,
+                                failed
                             };
                             res.status(200).json(resultObject);
                         }
@@ -132,8 +134,8 @@ exports.checkIdleElbs = (req, res) => {
         }
         else {
             let elbList = data;
-            let idleElbList = [];
-            let nonIdleElbList = [];
+            let failed = [];
+            let passed = [];
             let params = {};
             let startDate = new Date();
             startDate.setDate(startDate.getDate() - 7);
@@ -163,14 +165,15 @@ exports.checkIdleElbs = (req, res) => {
                         data.forEach(dataPoint => {
                             requestCount += dataPoint.Sum;
                         });
-                        if (requestCount === 0) idleElbList.push(elb.LoadBalancerName);
-                        else nonIdleElbList.push(elb.LoadBalancerName);
+                        if (requestCount === 0) failed.push(elb.LoadBalancerName);
+                        else passed.push(elb.LoadBalancerName);
                         count++;
                         if (count === elbList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                failure: idleElbList,
-                                success: nonIdleElbList
+                                elbList,
+                                failed,
+                                passed
                             };
                             res.status(200).json(resultObject);
                         }
@@ -239,8 +242,9 @@ exports.checkElbSecurityGroup = (req, res) => {
                             if (elbCount === elbList.length && sgCount === securityGroupList.length) {
                                 resultObject.success = true;
                                 resultObject.data = {
-                                    success: Array.from(secureGroupList),
-                                    failure: Array.from(insecureGroupList)
+                                    elbList,
+                                    passed: Array.from(secureGroupList),
+                                    failed: Array.from(insecureGroupList)
                                 };
                                 res.status(200).json(resultObject);
                             }
@@ -270,16 +274,17 @@ exports.checkInternetFacingElbs = (req, res) => {
         }
         else {
             let elbList = data;
-            let internetFacingElbList = [];
-            let internalElbList = [];
+            let failed = [];
+            let passed = [];
             elbList.forEach(elb => {
-                if (elb.Scheme === 'internet-facing') internetFacingElbList.push(elb.LoadBalancerName);
-                else internalElbList.push(elb.LoadBalancerName);
+                if (elb.Scheme === 'internet-facing') failed.push(elb.LoadBalancerName);
+                else passed.push(elb.LoadBalancerName);
             });
             resultObject.success = true;
             resultObject.data = {
-                failure: internetFacingElbList,
-                success: internalElbList
+                elbList,
+                failed,
+                passed
             };
             res.status(200).json(resultObject);
         }
@@ -304,8 +309,8 @@ exports.checkElbDeleteProtection = (req, res) => {
         }
         else {
             let elbList = data;
-            let deleteProtectionEnabledList = [];
-            let deleteProtectionDisabledList = [];
+            let passed = [];
+            let failed = [];
             let params = {};
             let elbCount = 0;
             elbList.forEach(elb => {
@@ -319,15 +324,16 @@ exports.checkElbDeleteProtection = (req, res) => {
                     }
                     else {
                         if (isDeleteProtectionEnabled === "true")
-                            deleteProtectionEnabledList.push(elb.LoadBalancerName);
+                            passed.push(elb.LoadBalancerName);
                         else
-                            deleteProtectionDisabledList.push(elb.LoadBalancerName);
+                            failed.push(elb.LoadBalancerName);
                         elbCount++;
                         if (elbCount === elbList.length) {
                             resultObject.success = true;
                             resultObject.data = {
-                                success: deleteProtectionEnabledList,
-                                failure: deleteProtectionDisabledList
+                                elbList,
+                                passed,
+                                failed
                             };
                             res.status(200).json(resultObject);
                         }

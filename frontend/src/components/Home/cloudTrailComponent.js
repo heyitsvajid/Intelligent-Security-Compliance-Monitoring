@@ -1,6 +1,5 @@
 import React from 'react';
 import Rule from '../Rule/Rule';
-import API from '../API/index';
 import CloudTrailApi from '../API/cloudTrailApi';
 import Fade from 'react-reveal/Fade';
 import {
@@ -26,7 +25,6 @@ class CloudTrailComponent extends React.Component{
         let authUser = this.props.authUser;
 
         this.state = {
-            cloudTrail: false,
             accessLogging: false,
             mfaDelete: false,
             insecureBuckets: false,
