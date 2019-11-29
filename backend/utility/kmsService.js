@@ -40,3 +40,20 @@ exports.getKeyPolicy = (params, credentials, callback) => {
         }
     });
 };
+
+exports.getCallerIdentity = (params, credentials, callback) => {
+    let log = logger.getLogger(fileName + "getCallerIdentity");
+    log.info("Started");
+    const sts = new AWS.STS({"credentials": credentials});
+
+    sts.getCallerIdentity(params, (err, data) => {
+        if (err) {
+            log.error("Error calling getCallerIdentity: " + JSON.stringify(err));
+            callback(err, null);
+        }
+        else {
+            log.info("Returning with Caller Identity: " + JSON.stringify(data));
+            callback(null, data);
+        }
+    });
+};

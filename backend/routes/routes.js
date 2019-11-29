@@ -56,6 +56,9 @@ module.exports = function (app) {
   //Check for publicly exposed keys
   app.post('/checkExposedKeys', kmsController.checkExposedKeys);
 
+  //Check cross account access for keys
+  app.post('/checkCrossAccountAccess', kmsController.checkCrossAccountAccess);
+
 }
 
 

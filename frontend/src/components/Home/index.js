@@ -21,6 +21,7 @@ import {
 import {Tabs, Tab} from 'react-bootstrap';
 import CloudTrailComponent from "./cloudTrailComponent";
 import ElbComponent from './elbComponent';
+import KmsComponent from './kmsComponent';
 
 const STATUS_PASSED = "PASS"
 const STATUS_FAILED = "FAIL"
@@ -198,7 +199,7 @@ s3BucketEncryption() {
                               <CloudTrailComponent/>
                           </Tab>
                           <Tab title="KMS" eventKey="kms">
-                              <CloudTrailComponent/>
+                              <KmsComponent/>
                           </Tab>
                           <Tab title="RDS" eventKey="rds">
                               <CloudTrailComponent/>
