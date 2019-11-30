@@ -11,30 +11,19 @@
     "@fortawesome/react-fontawesome": "0.1.4",
     "axios": "^0.19.0",
     "bootstrap": "4.3.1",
-<<<<<<< HEAD
     "firebase": "^7.5.0",
     "jquery": "3.4.1",
     "moment": "2.24.0",
     "node-pre-gyp": "^0.14.0",
     "react": "^16.8.6",
-=======
-    "firebase": "^5.11.1",
-    "jquery": "3.4.1",
-    "moment": "2.24.0",
-    "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.16",
->>>>>>> 0afd4c425578cfb9f8d5ad6fd138977ff468f6dc
     "react-dom": "^16.8.6",
     "react-feather": "^2.0.3",
     "react-intercom": "^1.0.15",
     "react-loader-spinner": "^2.3.0",
     "react-reveal": "^1.2.2",
     "react-router-dom": "^4.3.1",
-<<<<<<< HEAD
-    "react-scripts": "2.1.1",
-=======
     "react-scripts": "^3.2.0",
->>>>>>> 0afd4c425578cfb9f8d5ad6fd138977ff468f6dc
     "react-select": "^3.0.4",
     "reactstrap": "^8.0.0",
     "recharts": "^1.7.1",
