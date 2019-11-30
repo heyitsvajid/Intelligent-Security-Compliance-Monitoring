@@ -88,7 +88,47 @@ class ComplainceReport extends React.Component {
       rdsEncryptionHeader:[],                 
       rdsIAMAuthenticationChartData: [],
       rdsIAMAuthenticationData: {},
-      rdsIAMAuthenticationHeader:[],                       
+      rdsIAMAuthenticationHeader:[], 
+      ec2:false,
+      unusedAmisChartData: [],
+      unusedAmisData: {},
+      unusedAmisHeader:[],
+      underutilizedInstancesChartData: [],
+      underutilizedInstancesData: {},
+      underutilizedInstancesHeader:[],
+      unEncryptedAMISChartData: [],
+      unEncryptedAMISData: {},
+      unEncryptedAMISHeader:[],
+      unrestrictedSecurityGroupAttachedEC2InstanceChartData: [],
+      unrestrictedSecurityGroupAttachedEC2InstanceData: {},
+      unrestrictedSecurityGroupAttachedEC2InstanceHeader:[],
+      unAssociatedEIPsChartData: [],
+      unAssociatedEIPsData: {},
+      unAssociatedEIPsHeader:[],
+      unusedEc2KeyPairsChartData: [],
+      unusedEc2KeyPairsData: {},
+      unusedEc2KeyPairsHeader:[],
+      iam:false,
+      keyRotationCheckChartData: [],
+      keyRotationCheckData: {},
+      keyRotationCheckHeader:[],
+      unnecessaryAccessKeysChartData: [],
+      unnecessaryAccessKeysData: {},
+      unnecessaryAccessKeysHeader:[],
+      iamUserswithAdminAccessChartData: [],
+      iamUserswithAdminAccessData: {},
+      iamUserswithAdminAccessHeader:[],
+      iamUserswithPolicyEditAccessChartData: [],
+      iamUserswithPolicyEditAccessData: {},
+      iamUserswithPolicyEditAccessHeader:[],
+      unusedIamUsersChartData: [],
+      unusedIamUsersData: {},
+      unusedIamUsersHeader:[],
+      sshKeyRotationCheckChartData: [],
+      sshKeyRotationCheckData: {},
+      sshKeyRotationCheckHeader:[],
+
+
     };
 
     this.s3FullControlAccess()
@@ -313,6 +353,200 @@ s3BucketLogging() {
             s3BucketLoggingChartData:chartData,
             s3BucketLoggingData:tableData,
             s3BucketLoggingHeader:header
+          })
+        })
+      }
+  })
+}
+
+//ec2
+
+unusedAmis() {
+  API.unusedAmis(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unusedAmisChartData:chartData,
+            unusedAmisData:tableData,
+            unusedAmisHeader:header
+          })
+        })
+      }
+  })
+}
+
+underutilizedInstances() {
+  API.underutilizedInstances(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            underutilizedInstancesChartData:chartData,
+            underutilizedInstancesData:tableData,
+            underutilizedInstancesHeader:header
+          })
+        })
+      }
+  })
+}
+
+unrestrictedSecurityGroupAttachedEC2Instance() {
+  API.unrestrictedSecurityGroupAttachedEC2Instance(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unrestrictedSecurityGroupAttachedEC2InstanceChartData:chartData,
+            unrestrictedSecurityGroupAttachedEC2InstanceData:tableData,
+            unrestrictedSecurityGroupAttachedEC2InstanceHeader:header
+          })
+        })
+      }
+  })
+}
+
+unEncryptedAMIS() {
+  API.unEncryptedAMIS(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unEncryptedAMISChartData:chartData,
+            unEncryptedAMISData:tableData,
+            unEncryptedAMISHeader:header
+          })
+        })
+      }
+  })
+}
+
+unAssociatedEIPs() {
+  API.unAssociatedEIPs(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unAssociatedEIPsChartData:chartData,
+            unAssociatedEIPsData:tableData,
+            unAssociatedEIPsHeader:header
+          })
+        })
+      }
+  })
+}
+
+unusedEc2KeyPairs() {
+  API.unusedEc2KeyPairs(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unusedEc2KeyPairsChartData:chartData,
+            unusedEc2KeyPairsData:tableData,
+            unusedEc2KeyPairsHeader:header
+          })
+        })
+      }
+  })
+}
+
+unAssociatedEIPsChartData() {
+  API.unAssociatedEIPs(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unAssociatedEIPsChartData:chartData,
+            unAssociatedEIPsData:tableData,
+            unAssociatedEIPsChartHeader:header
+          })
+        })
+      }
+  })
+}
+
+keyRotationCheck() {
+  API.keyRotationCheck(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            keyRotationCheckChartData:chartData,
+            keyRotationCheckData:tableData,
+            keyRotationCheckHeader:header
+          })
+        })
+      }
+  })
+}
+
+unnecessaryAccessKeys() {
+  API.unnecessaryAccessKeys(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unnecessaryAccessKeysChartData:chartData,
+            unnecessaryAccessKeysData:tableData,
+            unnecessaryAccessKeysHeader:header
+          })
+        })
+      }
+  })
+}
+
+iamUserswithAdminAccess() {
+  API.iamUserswithAdminAccess(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            iamUserswithAdminAccessChartData:chartData,
+            iamUserswithAdminAccessData:tableData,
+            iamUserswithAdminAccessHeader:header
+          })
+        })
+      }
+  })
+}
+
+unusedIamUsers() {
+  API.unusedIamUsers(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            unusedIamUsersChartData:chartData,
+            unusedIamUsersData:tableData,
+            unusedIamUsersHeader:header
+          })
+        })
+      }
+  })
+}
+
+sshKeyRotation() {
+  API.sshKeyRotation(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            sshKeyRotationCheckChartData:chartData,
+            sshKeyRotationCheckData:tableData,
+            sshKeyRotationCheckHeader:header
           })
         })
       }
