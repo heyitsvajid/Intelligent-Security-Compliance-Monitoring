@@ -18,6 +18,10 @@ import {
     faPlusSquare,
     faMinusSquare
   } from "@fortawesome/free-regular-svg-icons";
+import {Tabs, Tab} from 'react-bootstrap';
+import CloudTrailComponent from "./cloudTrailComponent";
+import ElbComponent from './elbComponent';
+import KmsComponent from './kmsComponent';
 
 const STATUS_PASSED = "PASS"
 const STATUS_FAILED = "FAIL"
@@ -566,135 +570,39 @@ sshKeyRotation() {
                       </Col>
                       </Row>
                     </CardHeader>
-                  <CardBody>
-                  <div>
-                  <Row onClick={this.openService.bind(this,1)}>
-                      <Col md="11"><h4><b>Simple Storage Service (S3)</b></h4></Col>
-                      <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.s3 ? faMinusSquare: faPlusSquare}/></Col>
-                  </Row>
-                  <Fade>
-                  <div  id="s3FullControlAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3FullControlAccessData.length > 0 ?
-                        <Rule chartData={this.state.s3FullControlAccessChartData} 
-                        tableHeaders={this.state.s3FullControlAccessHeader}
-                        tableTitle={"S3 Full Control Access"} 
-                        tableData={this.state.s3FullControlAccessData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="s3BucketEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3BucketEncryptionData.length > 0 ?
-                        <Rule chartData={this.state.s3BucketEncryptionChartData} 
-                        tableHeaders={this.state.s3BucketEncryptionHeader}
-                        tableTitle={"S3 Bucket Encryption"} 
-                        tableData={this.state.s3BucketEncryptionData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="s3BucketMfaDelete" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3BucketMfaDeleteData.length > 0 ?
-                        <Rule chartData={this.state.s3BucketMfaDeleteChartData} 
-                        tableHeaders={this.state.s3BucketMfaDeleteHeader}
-                        tableTitle={"S3 Bucket Mfa Delete"} 
-                        tableData={this.state.s3BucketMfaDeleteData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="s3PublicAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3PublicAccessData.length > 0 ?
-                        <Rule chartData={this.state.s3PublicAccessChartData} 
-                        tableHeaders={this.state.s3PublicAccessHeader}
-                        tableTitle={"S3 Public Access"} 
-                        tableData={this.state.s3PublicAccessData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="s3BucketCustomerEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3BucketCustomerEncryptionData.length > 0 ?
-                        <Rule chartData={this.state.s3BucketCustomerEncryptionChartData} 
-                        tableHeaders={this.state.s3BucketCustomerEncryptionHeader}
-                        tableTitle={"S3 Bucket Customer Encryption"} 
-                        tableData={this.state.s3BucketCustomerEncryptionData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="s3LimitByIpAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3LimitByIpAccessData.length > 0 ?
-                        <Rule chartData={this.state.s3LimitByIpAccessChartData} 
-                        tableHeaders={this.state.s3LimitByIpAccessHeader}
-                        tableTitle={"S3 Limit By Ip Access"} 
-                        tableData={this.state.s3LimitByIpAccessData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>         
-                  <div  id="s3BucketLogging" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.s3BucketLoggingData.length > 0 ?
-                        <Rule chartData={this.state.s3BucketLoggingChartData} 
-                        tableHeaders={this.state.s3BucketLoggingHeader}
-                        tableTitle={"S3 Bucket Logging"} 
-                        tableData={this.state.s3BucketLoggingData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>                                    
-                  </Fade>
-                  <hr/>
-                  <Row onClick={this.openService.bind(this,2)}>
-                      <Col md="11"><h4><b>Relational Database Service (RDS)</b></h4></Col>
-                      <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.rds ? faMinusSquare: faPlusSquare}/></Col>
-                  </Row>
-                  <Fade>
-                  <div  id="rdsAutomatedBackup" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.rdsAutomatedBackupData.length > 0 ?
-                        <Rule chartData={this.state.rdsAutomatedBackupChartData} 
-                        tableHeaders={this.state.rdsAutomatedBackupHeader}
-                        tableTitle={"RDS Automated Backup"} 
-                        tableData={this.state.rdsAutomatedBackupData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="rdsDeletionProtection" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.rdsDeletionProtectionData.length > 0 ?
-                        <Rule chartData={this.state.rdsDeletionProtectionChartData} 
-                        tableHeaders={this.state.rdsDeletionProtectionHeader}
-                        tableTitle={"RDS Deletion Protection"} 
-                        tableData={this.state.rdsDeletionProtectionData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="rdsEncryption" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.rdsEncryptionData.length > 0 ?
-                        <Rule chartData={this.state.rdsEncryptionChartData} 
-                        tableHeaders={this.state.rdsEncryptionHeader}
-                        tableTitle={"RDS Encryption"} 
-                        tableData={this.state.rdsEncryptionData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>
-                  <div  id="rdsIAMAuthentication" className="mt-3" style={{display: this.state.rds ? 'block' : 'none',transition: 'display 1s'}}>
-                  {
-                        this.state.rdsIAMAuthenticationData.length > 0 ?
-                        <Rule chartData={this.state.rdsIAMAuthenticationChartData} 
-                        tableHeaders={this.state.rdsIAMAuthenticationHeader}
-                        tableTitle={"RDS IAM Authentication"} 
-                        tableData={this.state.rdsIAMAuthenticationData} /> 
-                        : "No data available for rule."
-                  }
-                  </div>                  
-                  </Fade>
-                  </div>         
-          </CardBody>
-        </Card>
-                  </Col>
+                  <CardBody>             
+                      <Tabs id="tabView" defaultActiveKey="autoScaling">
+                          <Tab title="Auto Scaling" eventKey="autoScaling">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="Cloud Trail" eventKey="cloudTrail">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="EC2" eventKey="ec2">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="ELB" eventKey="elb">
+                              <ElbComponent/>
+                          </Tab>
+                          <Tab title="IAM" eventKey="iam">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="KMS" eventKey="kms">
+                              <KmsComponent/>
+                          </Tab>
+                          <Tab title="RDS" eventKey="rds">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="S3" eventKey="s3">
+                              <CloudTrailComponent/>
+                          </Tab>
+                          <Tab title="VPC" eventKey="vpc">
+                              <CloudTrailComponent/>
+                          </Tab>
+                      </Tabs>
+                  </CardBody>
+                </Card>
+                </Col>
                 <Col md="1"/>
               </Row>
             </Container>

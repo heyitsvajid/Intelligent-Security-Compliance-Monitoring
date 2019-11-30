@@ -29,8 +29,13 @@ export default class RuleBarChart extends PureComponent {
         <div>
         {this.state.chartData.length > 0 ? 
             <BarChart
+<<<<<<< HEAD
             width={330}
             height={270}
+=======
+            width={350}
+            height={300}
+>>>>>>> 0afd4c425578cfb9f8d5ad6fd138977ff468f6dc
             data={this.state.chartData}
           >
             <CartesianGrid />

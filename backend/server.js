@@ -32,7 +32,10 @@ app.use(function (req, res, next) {
 });
 
 //Environment File
-require('dotenv').config()
+require('dotenv').config();
+
+//Router Configuration
+require('./routes/routes.js')(app);
 
 //Router Configuration
 require('./routes/ec2Routes.js')(app);

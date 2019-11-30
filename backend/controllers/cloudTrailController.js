@@ -1,40 +1,17 @@
-const AWS = require('aws-sdk');
 const logger = require('../config/logger');
 const Model = require('../model/resultObject.js');
 const fileName = "CloudTrailController: ";
 const CloudTrailService = require('../utility/cloudTrailService');
-const credentials = new AWS.Credentials({
-    accessKeyId: 'AKIARQG3VVSJGWWBWW43', secretAccessKey: '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', sessionToken: null
-});
-
-exports.getTrailStatus = (req, res) => {
-    let log = logger.getLogger(fileName + 'getTrailStatus API');
-    log.info('received input trail name: '+ req.body.trailName);
-    let resultObject = new Model.ResultObject();
-    let params = {
-        Name: req.body.trailName
-    };
-
-    CloudTrailService.getTrailStatus(params, credentials, (err, data) => {
-        if (err) {
-            log.error("Error Calling CloudTrailService.getTrailStatus: " + JSON.stringify(err));
-            resultObject.success = false;
-            resultObject.errorMessage = err.message;
-            res.status(400).json(resultObject);
-        }
-        else{
-            resultObject.success = true;
-            resultObject.data = {
-                trailStatus: data
-            };
-            res.status(200).json(resultObject);
-        }
-    });
-};
+const AWS = require('aws-sdk');
 
 exports.getAllTrailsInfo = (req, res) => {
     let log = logger.getLogger(fileName + 'describeTrails API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -56,6 +33,11 @@ exports.getAllTrailsInfo = (req, res) => {
 exports.checkAccessLoggingForBuckets = (req, res) => {
     let log = logger.getLogger(fileName + 'checkAccessLoggingForBuckets API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -66,7 +48,8 @@ exports.checkAccessLoggingForBuckets = (req, res) => {
         }
         else {
             let trailList = data;
-            let resultS3bucketList = [];
+            let passed = [];
+            let failed = [];
             let count = 0;
             //TODO: change this to communicate with s3 service
             trailList.forEach(trail => {
@@ -78,19 +61,17 @@ exports.checkAccessLoggingForBuckets = (req, res) => {
                         res.status(400).json(resultObject);
                     }
                     else {
-                        if (typeof data.LoggingEnabled === "undefined") resultS3bucketList.push(trail.S3BucketName);
+                        if (typeof data.LoggingEnabled === "undefined") failed.push(trail.Name);
+                        else passed.push(trail.Name);
                         count++;
                         if (count === trailList.length) {
-                            if (resultS3bucketList.length === 0) {
-                                resultObject.success = true;
-                                resultObject.successMessage = "All the S3 Buckets have access logging enabled";
-                                res.status(200).json(resultObject);
-                            }
-                            else {
-                                resultObject.success = false;
-                                resultObject.errorMessage = "Access Logging is not enabled for " + resultS3bucketList;
-                                res.status(400).json(resultObject);
-                            }
+                            resultObject.success = true;
+                            resultObject.data = {
+                                trailList,
+                                passed,
+                                failed
+                            };
+                            res.status(200).json(resultObject);
                         }
                     }
                 });
@@ -102,6 +83,11 @@ exports.checkAccessLoggingForBuckets = (req, res) => {
 exports.checkMfaDeleteForBuckets = (req, res) => {
     let log = logger.getLogger(fileName + 'checkMfaForBuckets API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -112,7 +98,8 @@ exports.checkMfaDeleteForBuckets = (req, res) => {
         }
         else {
             let trailList = data;
-            let resultS3bucketList = [];
+            let passed = [];
+            let failed = [];
             let count = 0;
             //TODO: change this to communicate with s3 service
             trailList.forEach(trail => {
@@ -124,20 +111,17 @@ exports.checkMfaDeleteForBuckets = (req, res) => {
                         res.status(400).json(resultObject);
                     }
                     else {
-                        if (data.MFADelete !== "Enabled")
-                            resultS3bucketList.push(trail.S3BucketName);
+                        if (data.MFADelete === "Enabled") passed.push(trail.Name);
+                        else failed.push(trail.Name);
                         count++;
                         if (count === trailList.length) {
-                            if (resultS3bucketList.length === 0) {
-                                resultObject.success = true;
-                                resultObject.successMessage = "All the S3 Buckets have MFA delete enabled";
-                                res.status(200).json(resultObject);
-                            }
-                            else {
-                                resultObject.success = false;
-                                resultObject.errorMessage = "MFA delete is not enabled for " + resultS3bucketList;
-                                res.status(400).json(resultObject);
-                            }
+                            resultObject.success = true;
+                            resultObject.data = {
+                                trailList,
+                                passed,
+                                failed
+                            };
+                            res.status(200).json(resultObject);
                         }
                     }
                 });
@@ -149,6 +133,11 @@ exports.checkMfaDeleteForBuckets = (req, res) => {
 exports.checkInsecureBuckets = (req, res) => {
     let log = logger.getLogger(fileName + 'checkInsecureBuckets API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -159,7 +148,8 @@ exports.checkInsecureBuckets = (req, res) => {
         }
         else {
             let trailList = data;
-            let resultS3bucketList = [];
+            let passed = [];
+            let failed = [];
             let count = 0;
             //TODO: change this to communicate with s3 service
             trailList.forEach(trail => {
@@ -174,20 +164,18 @@ exports.checkInsecureBuckets = (req, res) => {
                         let grantsList = data.Grants;
                         grantsList.forEach(grantee => {
                             if (grantee.URI === 'http://acs.amazonaws.com/groups/global/AllUsers')
-                                resultS3bucketList.push(trail.S3BucketName);
+                                failed.push(trail.S3BucketName);
+                            else if (!passed.includes(trail.S3BucketName)) passed.push(trail.S3BucketName);
                         });
                         count++;
                         if (count === trailList.length) {
-                            if (resultS3bucketList.length === 0) {
-                                resultObject.success = true;
-                                resultObject.successMessage = "All the S3 Buckets are secure";
-                                res.status(200).json(resultObject);
-                            }
-                            else {
-                                resultObject.success = false;
-                                resultObject.errorMessage = "Below list of S3 Buckets are  publicly accessible: " + resultS3bucketList;
-                                res.status(400).json(resultObject);
-                            }
+                            resultObject.success = true;
+                            resultObject.data = {
+                                trailList,
+                                passed,
+                                failed
+                            };
+                            res.status(200).json(resultObject);
                         }
                     }
                 });
@@ -199,6 +187,11 @@ exports.checkInsecureBuckets = (req, res) => {
 exports.checkLogFileEncryption = (req, res) => {
     let log = logger.getLogger(fileName + 'checkLogFileEncryption API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -209,20 +202,19 @@ exports.checkLogFileEncryption = (req, res) => {
         }
         else {
             let trailList = data;
-            let unencryptedList = [];
+            let passed = [];
+            let failed = [];
             trailList.forEach(trail => {
-                if (typeof trail.KmsKeyId === "undefined") unencryptedList.push(trail.Name);
+                if (typeof trail.KmsKeyId === "undefined") failed.push(trail.Name);
+                else passed.push(trail.Name);
             });
-            if (unencryptedList.length === 0) {
-                resultObject.success = true;
-                resultObject.successMessage = "All the Trails have log file encryption enabled";
-                res.status(200).json(resultObject);
-            }
-            else {
-                resultObject.success = false;
-                resultObject.errorMessage = "Log Files not encrypted for " + unencryptedList;
-                res.status(400).json(resultObject);
-            }
+            resultObject.success = true;
+            resultObject.data = {
+                trailList,
+                passed,
+                failed
+            };
+            res.status(200).json(resultObject);
         }
     });
 };
@@ -230,6 +222,11 @@ exports.checkLogFileEncryption = (req, res) => {
 exports.checkMultiRegionAccess = (req, res) => {
     let log = logger.getLogger(fileName + 'checkMultiRegionAccess API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -240,20 +237,19 @@ exports.checkMultiRegionAccess = (req, res) => {
         }
         else {
             let trailList = data;
-            let singleRegionList = [];
+            let failed = [];
+            let passed = [];
             trailList.forEach(trail => {
-                if (trail.IsMultiRegionTrail === false) singleRegionList.push(trail.Name);
+                if (trail.IsMultiRegionTrail === false) failed.push(trail.Name);
+                else passed.push(trail.Name);
             });
-            if (singleRegionList.length === 0) {
-                resultObject.success = true;
-                resultObject.successMessage = "All the Trails are enabled for global monitoring";
-                res.status(200).json(resultObject);
-            }
-            else {
-                resultObject.success = false;
-                resultObject.errorMessage = "Multi region access is not enabled for " + singleRegionList;
-                res.status(400).json(resultObject);
-            }
+            resultObject.success = true;
+            resultObject.data = {
+                trailList,
+                passed,
+                failed
+            };
+            res.status(200).json(resultObject);
         }
     });
 };
@@ -261,6 +257,11 @@ exports.checkMultiRegionAccess = (req, res) => {
 exports.checkLogFileIntegrityValidation = (req, res) => {
     let log = logger.getLogger(fileName + 'checkLogFileIntegrityValidation API');
     let resultObject = new Model.ResultObject();
+    const credentials = new AWS.Credentials({
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_KEY,
+        sessionToken: null
+    });
 
     CloudTrailService.getAllTrailsInfo(credentials, (err, data) => {
         if (err) {
@@ -271,20 +272,19 @@ exports.checkLogFileIntegrityValidation = (req, res) => {
         }
         else {
             let trailList = data;
-            let validationDisabledList = [];
+            let passed = [];
+            let failed = [];
             trailList.forEach(trail => {
-                if (trail.LogFileValidationEnabled === false) validationDisabledList.push(trail.Name);
+                if (trail.LogFileValidationEnabled === false) failed.push(trail.Name);
+                else passed.push(trail.Name);
             });
-            if (validationDisabledList.length === 0) {
-                resultObject.success = true;
-                resultObject.successMessage = "All the Trails have Log File Integrity Validation enabled";
-                res.status(200).json(resultObject);
-            }
-            else {
-                resultObject.success = false;
-                resultObject.errorMessage = "Log File Integrity Validation is not enabled for " + validationDisabledList;
-                res.status(400).json(resultObject);
-            }
+            resultObject.success = true;
+            resultObject.data = {
+                trailList,
+                passed,
+                failed
+            };
+            res.status(200).json(resultObject);
         }
     });
 };

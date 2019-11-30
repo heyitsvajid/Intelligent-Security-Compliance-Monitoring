@@ -1,6 +1,11 @@
 import React from "react";
 import {
   Card,
+<<<<<<< HEAD
+=======
+  CardHeader,
+  CardTitle,
+>>>>>>> 0afd4c425578cfb9f8d5ad6fd138977ff468f6dc
   Table
 } from "reactstrap";
 
@@ -21,6 +26,10 @@ class RuleTable extends React.Component {
     }
 
     generateTable = () => {
+<<<<<<< HEAD
+=======
+      // debugger
+>>>>>>> 0afd4c425578cfb9f8d5ad6fd138977ff468f6dc
         let data = this.state
         if(data.title && data.headers.length > 0 && data.rows.length > 0){
          
@@ -31,11 +40,19 @@ class RuleTable extends React.Component {
             let tableRows = data.rows.map((row, index) => {
                 let rowData =  row.map((key, i) => {
                     if(key === 'PASS'){
+<<<<<<< HEAD
                       return <td style={{color:'green'}} key={i}><b>{key}</b></td>
                     }else if(key === 'FAIL'){
                       return <td  style={{color:'red'}} key={i}><b>{key}</b></td>
                     }else{
                       return <td key={i}><b>{key}</b></td>
+=======
+                      return <td style={{color:'green'}} key={i}>{key}</td>
+                    }else if(key === 'FAIL'){
+                      return <td  style={{color:'red'}} key={i}>{key}</td>
+                    }else{
+                      return <td key={i}>{key}</td>
+>>>>>>> 0afd4c425578cfb9f8d5ad6fd138977ff468f6dc
                     }
                  })
                 return (

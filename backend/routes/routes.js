@@ -1,42 +1,57 @@
 module.exports = function (app) {
 
-  var controller = require('../controllers/controller.js');
+  //var controller = require('../controllers/controller.js');
   let cloudTrailController = require('../controllers/cloudTrailController');
-
-  //Ping Server
-  app.get('/ping', controller.ping);
-
-  //Unused AMIs
-  app.post('/unusedAmis', controller.unusedAmis);
-
-  //Underutilized Instances
-  app.post('/underutilizedInstances', controller.underutilizedInstances);
-
-  //Get Status of a cloud trail
-  app.post('/getTrailStatus', cloudTrailController.getTrailStatus);
-
+  let elbController = require('../controllers/elbController');
+  let kmsController = require('../controllers/kmsController');
+  let s3Ccontroller=require('../controllers/s3controller');
+  let rdsCcontroller=require('../controllers/rdsController');
   //Describe all the trails in account
-  app.get('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
-
-  //Check File Encryption status for all the trails in the account
-  app.get('/checkLogFileEncryption', cloudTrailController.checkLogFileEncryption);
+  app.post('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
 
   //Check access logging status for s3 buckets linked to trails
-  app.get('/checkAccessLoggingForBuckets', cloudTrailController.checkAccessLoggingForBuckets);
+  app.post('/checkAccessLoggingForBuckets', cloudTrailController.checkAccessLoggingForBuckets);
 
   //Check MFA delete status for s3 buckets linked to trails
-  app.get('/checkMfaDeleteForBuckets', cloudTrailController.checkMfaDeleteForBuckets);
+  app.post('/checkMfaDeleteForBuckets', cloudTrailController.checkMfaDeleteForBuckets);
 
   //Check for publicly accessible buckets linked to trails
-  app.get('/checkInsecureBuckets', cloudTrailController.checkInsecureBuckets);
+  app.post('/checkInsecureBuckets', cloudTrailController.checkInsecureBuckets);
+
+  //Check File Encryption status for all the trails in the account
+  app.post('/checkLogFileEncryption', cloudTrailController.checkLogFileEncryption);
 
   //Check whether the trails are enabled for multiple regions
-  app.get('/checkMultiRegionAccess', cloudTrailController.checkMultiRegionAccess);
+  app.post('/checkMultiRegionAccess', cloudTrailController.checkMultiRegionAccess);
 
   //Check whether Log File Integrity Validation is enabled for trails
-  app.get('/checkLogFileIntegrityValidation', cloudTrailController.checkLogFileIntegrityValidation);
+  app.post('/checkLogFileIntegrityValidation', cloudTrailController.checkLogFileIntegrityValidation);
 
-}
+  //Check the security protocol of ELB listeners
+  app.post('/checkElbListenerSecurity', elbController.checkElbListenerSecurity);
+
+  //Check the health of ELB targets
+  app.post('/checkElbHealth', elbController.checkElbHealth);
+
+  //Check for Idle ELBs
+  app.post('/checkIdleElbs', elbController.checkIdleElbs);
+
+  //Check for insecure Security Groups linked to ELBs
+  app.post('/checkElbSecurityGroup', elbController.checkElbSecurityGroup);
+
+  //Check for internet facing ELBs
+  app.post('/checkInternetFacingElbs', elbController.checkInternetFacingElbs);
+
+  //Check whether delete protection is enabled for ELBs
+  app.post('/checkElbDeleteProtection', elbController.checkElbDeleteProtection);
+
+  //Check for publicly exposed keys
+  app.post('/checkExposedKeys', kmsController.checkExposedKeys);
+
+  //Check cross account access for keys
+  app.post('/checkCrossAccountAccess', kmsController.checkCrossAccountAccess);
+
+
 
   // AWS S3 Bucket Public Access
   app.post('/s3LimitByIpAccess', s3Ccontroller.s3LimitByIpAccess);
@@ -56,3 +71,4 @@ module.exports = function (app) {
   // AWS RDS IAMAuthentication
   app.post('/rdsIAMAuthentication', rdsCcontroller.rdsIAMAuthentication);
 
+}
