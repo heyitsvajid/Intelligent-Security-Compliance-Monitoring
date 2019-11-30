@@ -112,7 +112,8 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
         }
         let unrestrictedSecurityGroups = [];
         let securityGroups=data.SecurityGroups;
-        console.log(securityGroups);
+        let passed=set();
+        let failed=set();
         for(let i=0;i<securityGroups.length;i++) {
             let ingress=securityGroups[i].IpPermissions;
             for(let j=0;j<ingress.length;j++) {
@@ -120,7 +121,10 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
                     for(let k=0;k<ingress[j].IpRanges.length;k++){
                         let trafficIp=ingress[j].IpRanges[k].CidrIp;
                         if(trafficIp==='0.0.0.0/0'){
-                            unrestrictedSecurityGroups.push(securityGroups[i].GroupId);
+                            failed.push(securityGroups[i].GroupId);
+                        }
+                        else{
+                            passed.push(securityGroups[i].GroupId);
                         }
                     }
                 }
@@ -128,7 +132,7 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
             
         }
         log.info("Returning with list: " + JSON.stringify(unrestrictedSecurityGroups))
-        callback(null,unrestrictedSecurityGroups)
+        callback(null,passed,failed)
     })
 }
 

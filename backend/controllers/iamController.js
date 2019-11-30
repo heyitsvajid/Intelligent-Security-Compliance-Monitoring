@@ -31,18 +31,27 @@ exports.keyRotationCheck = function(req, res) {
             res.status(400).json(resultObject);
             return
         }
-        let listOfIAMUsersWithKeyMoreThan90DaysOld=[];
+        let passed=[];
+        let failed=[];
+        let listIAMUsers=[];
         for(let i=0;i<listOfIAMUsers.length;i++){
             let CreatedDate=new Date(listOfIAMUsers[i].CreateDate);
             let currentDate=new Date();
-            if(Math.round((currentDate-CreatedDate)/(60*60*24))>90)
-            listOfIAMUsersWithKeyMoreThan90DaysOld.push(listOfIAMUsers[i].UserName);
+            if(Math.round((currentDate-CreatedDate)/(60*60*24))>90){
+                failed.push(listOfIAMUsers[i].UserName);
+            }
+            else {
+                passed.push(listOfIAMUsers[i].UserName);
+            }
+            listIAMUsers.push(listOfIAMUsers[i].UserName);
         }
         log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsersWithKeyMoreThan90DaysOld));
         
         resultObject.success = true
             let data = {
-                listOfIAMUsersWithKeyMoreThan90DaysOld : listOfIAMUsersWithKeyMoreThan90DaysOld
+                listIAMUsers,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -82,30 +91,45 @@ exports.unnecessaryAccessKeys = function(req, res) {
         })));
         }
         Promise.all(promises)
-        .then(data => {
-            
-            for(let j=0;j<data.length;j++){
-                let accessKeyMetadata=data[j].AccessKeyMetadata
+        .then(dataSet => {
+            let iamUsers=[];
+            let passed=[];
+            let failed=[];
+            for(let j=0;j<dataSet.length;j++){
+                let accessKeyMetadata=dataSet[j].AccessKeyMetadata
                     if(accessKeyMetadata.length>1){
                         let counter=0;
                         for(let x=0;x<accessKeyMetadata.length;x++){
                             counter++;
                             if(accessKeyMetadata[x].Status==='Active' && counter>1){
-                                listOfUsersWithUnnecessaryAccessKeys.add(accessKeyMetadata[x].UserName);
+                                failed.push(accessKeyMetadata[x].UserName);
+                            }
+                        }
+                    }else {
+                        for(let x=0;x<accessKeyMetadata.length;x++){
+                            if(accessKeyMetadata[x].Status==='Active'){
+                                passed.push(accessKeyMetadata[x].UserName); 
                             }
                         }
                     }
+                     
             }
-            return Array.from(listOfUsersWithUnnecessaryAccessKeys);
-        })
-        .then(returnData => {
+            for(let i=0;i<passed.length;i++){
+                iamUsers.push(passed[i]); 
+            }
+            for(let i=0;i<failed.length;i++){
+                iamUsers.push(failed[i]); 
+            }
             resultObject.success = true
             let data = {
-                listOfUsersWithUnnecessaryAccessKeys : returnData
+                iamUsers,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
         })
+        
     })
 }
 
@@ -135,7 +159,7 @@ exports.iamUserswithAdminAccess = function(req, res) {
         }
         log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsers));
         let listOfUsersWithAdminAccess=new Set();
-        let listOfUsers=[];
+        
         const promises = [];
         for(let i=0;i<listOfIAMUsers.length;i++){
             let userName=listOfIAMUsers[i].UserName;
@@ -149,22 +173,30 @@ exports.iamUserswithAdminAccess = function(req, res) {
         })));
         }
         Promise.all(promises)
-        .then(data => {
-            for(let j=0;j<data.length;j++){
-                let policies=data[j].policies;
+        .then(dataSet => {
+            let listOfUsers=[];
+            let passed=[];
+            let failed=[];
+            for(let j=0;j<dataSet.length;j++){
+                let policies=dataSet[j].policies;
                 let AttachedPolicies= policies.AttachedPolicies; 
                 for(let i=0;i<AttachedPolicies.length;i++){
                     if(AttachedPolicies[i].PolicyName==='AdministratorAccess'){
-                        listOfUsersWithAdminAccess.add(data[j].userName);
+                        failed.push(dataSet[j].userName);
                     }
-                }  
+                }
+                listOfUsers.push(dataSet[j].userName);  
             }
-            return Array.from(listOfUsersWithAdminAccess);
-        })
-        .then(returnData => {
+            for(let i=0;i<listOfUsers.length;i++){
+                if(failed.indexOf(listOfUsers[i])==-1){
+                    passed.push(listOfUsers[i]);
+                }
+            }
             resultObject.success = true
             let data = {
-                listOfUsersWithAdminAccess : returnData
+                listOfUsers,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -199,6 +231,9 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
         log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsers));
         let listOfUsersWithPolicyEditAccess=new Set();
         let listOfUsers=[];
+        for(let i=0;i<listOfIAMUsers.length;i++){
+            listOfUsers.push(listOfIAMUsers[i].UserName);
+        }
         const promises = [];
         for(let i=0;i<listOfIAMUsers.length;i++){
             let userName=listOfIAMUsers[i].UserName;
@@ -212,26 +247,36 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
         })));
         }
         Promise.all(promises)
-        .then(data => {
-            for(let j=0;j<data.length;j++){
-                let policies=data[j].policies;
+        .then(dataSet => {
+            //let listOfUsers=[];
+            let passed=[];
+            let failed=[];
+            for(let j=0;j<dataSet.length;j++){
+                let policies=dataSet[j].policies;
                 let AttachedPolicies= policies.AttachedPolicies; 
                 for(let i=0;i<AttachedPolicies.length;i++){
                     if(AttachedPolicies[i].PolicyName==='IAMFullAccess'){
-                        listOfUsersWithPolicyEditAccess.add(data[j].userName);
+                        failed.push(dataSet[j].userName);
                     }
                 }  
             }
-            return Array.from(listOfUsersWithPolicyEditAccess);
-        })
-        .then(returnData => {
+            for(let i=0;i<listOfUsers.length;i++){
+                if(failed.indexOf(listOfUsers[i])==-1){
+                    passed.push(listOfUsers[i]);
+                }
+            }
             resultObject.success = true
             let data = {
-                listOfUsersWithPolicyEditAccess : returnData
+                listOfUsers,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
+
+            
         })
+       
     })
 }
 
@@ -280,24 +325,31 @@ exports.unusedIamUsers = function(req, res) {
         })));
         }
         Promise.all(promises)
-        .then(data => {
-            for(let j=0;j<data.length;j++){
-                let detail=data[j].details
+        .then(dataSet => {
+            let listOfUsers=[];
+            let passed=[];
+            let failed=[];
+            for(let j=0;j<dataSet.length;j++){
+                let detail=dataSet[j].details
                 let accessKeyMetadata=detail.AccessKeyMetadata
                     if(accessKeyMetadata.length==0){
-                     listOfUnusedIAMUsers.add(data[j].userName)    
+                     failed.push(dataSet[j].userName)    
                     }
+                    else {
+                        passed.push(dataSet[j].userName);
+                    }
+                    listOfUsers.push(dataSet[j].userName);
             }
-            return Array.from(listOfUnusedIAMUsers);
-        })
-        .then(returnData => {
             resultObject.success = true
             let data = {
-                listOfUnusedIAMUsers : returnData
+                listOfUsers,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
         })
+        
     })
 }
 
@@ -337,31 +389,44 @@ exports.sshKeyRotationCheck = function(req, res) {
         })));
         }
         Promise.all(promises)
-        .then(data => {
-            for(let j=0;j<data.length;j++){
-                let detail=data[j].details;
+        .then(dataSet => {
+            let listOfUsers=[];
+            let passed=[];
+            let failed=[];
+            for(let j=0;j<dataSet.length;j++){
+                let detail=dataSet[j].details;
                 let sshPublicKeys=detail.SSHPublicKeys;
                 if(sshPublicKeys.length==0){
-                    listOfUsersWithSSHRotationKeyMoreThan90Days.add(data[j].userName);
+                    failed.push(dataSet[j].userName);
+                    listOfUsers.push(dataSet[j].userName);
                     continue
                 }
                 for(let i=0;i<sshPublicKeys.length;i++){
                     let CreatedDate=new Date(sshPublicKeys[i].CreateDate);
                     let currentDate=new Date();
-                    if(Math.round((currentDate-CreatedDate)/(60*60*24))>90)
-                    listOfUsersWithSSHRotationKeyMoreThan90Days.add(data[j].userName);
+                    if(Math.round((currentDate-CreatedDate)/(60*60*24))>90){
+                        failed.push(dataSet[j].userName);
+                        listOfUsers.push(dataSet[j].userName);
+                    }
+                }
+                
+            }
+            for(let i=0;i<listOfUsers.length;i++){
+                if(failed.indexOf(listOfUsers[i])==-1){
+                    passed.push(listOfUsers[i]);
                 }
             }
-            return Array.from(listOfUsersWithSSHRotationKeyMoreThan90Days);
-        })
-        .then(returnData => {
             resultObject.success = true
             let data = {
-                listOfUsersWithSSHRotationKeyMoreThan90Days : returnData
+                listOfUsers,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
+
         })
+       
     })
 }
 

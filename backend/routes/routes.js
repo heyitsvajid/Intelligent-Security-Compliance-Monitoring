@@ -38,4 +38,21 @@ module.exports = function (app) {
 
 }
 
+  // AWS S3 Bucket Public Access
+  app.post('/s3LimitByIpAccess', s3Ccontroller.s3LimitByIpAccess);
+
+  // AWS S3 Bucket Logging
+  app.post('/s3BucketLogging', s3Ccontroller.s3BucketLogging);
+
+  // AWS RDS Automated Backup
+  app.post('/rdsAutomatedBackup', rdsCcontroller.rdsAutomatedBackup);
+
+  // AWS RDS Deletion Protection
+  app.post('/rdsDeletionProtection', rdsCcontroller.rdsDeletionProtection);
+
+  // AWS RDS Encryption
+  app.post('/rdsEncryption', rdsCcontroller.rdsEncryption);
+
+  // AWS RDS IAMAuthentication
+  app.post('/rdsIAMAuthentication', rdsCcontroller.rdsIAMAuthentication);
 

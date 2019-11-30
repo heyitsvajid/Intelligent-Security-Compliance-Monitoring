@@ -44,11 +44,12 @@ exports.unusedAmis = function(req, res) {
             return
         }
         let usedAmiIds = []
+
         for (var i = 0; i < listOfEc2Description.length; i++) {
             usedAmiIds.push(listOfEc2Description[i].ImageId)
         }
         log.info("Used Ami Ids List: " + JSON.stringify(usedAmiIds));
-
+      
         AwsService.getAllAmiInfo(creds, function(err, allAmiIds) {
             if (err) {
                 log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
@@ -58,16 +59,23 @@ exports.unusedAmis = function(req, res) {
                 return
             }
             log.info("All Ami Ids List: " + JSON.stringify(allAmiIds));
-            let result = []
+            let failed = [];
+            let passed = [];
+            let imageIdList=[];
             for (var j = 0; j < allAmiIds.length; j++) {
                 if (!usedAmiIds.includes(allAmiIds[j].ImageId)) {
-                    result.push(allAmiIds[j]
-                        );
+                    failed.push(allAmiIds[j].ImageId);
                 }
+                else {
+                    passed.push(allAmiIds[j].ImageId); 
+                }
+                imageIdList.push(allAmiIds[j].ImageId);
             }
             resultObject.success = true
             let data = {
-                unusedAmis : result
+                imageIdList,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -91,7 +99,7 @@ exports.underutilizedInstances = function(req, res) {
     let resultObject = new Model.ResultObject();
 
         let underUtilizedInstances=[];
-        getUnderUtilizedInstances(creds,underUtilizedInstances,function(err,underUtilizedInstancesList) {
+        getUnderUtilizedInstances(creds,underUtilizedInstances,function(err,instanceIdList,passed,failed) {
             if (err) {
                 resultObject.success = false
                 resultObject.errorMessage = err.message
@@ -100,7 +108,9 @@ exports.underutilizedInstances = function(req, res) {
             }
             resultObject.success = true
             let data = {
-                underUtilizedInstancesList : underUtilizedInstancesList
+                instanceIdList,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -117,6 +127,9 @@ const getUnderUtilizedInstances=(creds,underUtilizedInstances,callback)=>{
             callback(err)
             return
         }
+        let passed=[]
+        let failed=[]
+        let instanceIdList=[];
         for (var i = 0; i < listOfEc2Description.length; i++) {
             let instanceId=listOfEc2Description[i].InstanceId
             AwsService.getMetricsStatistics(creds,instanceId,function(err, response){
@@ -124,11 +137,15 @@ const getUnderUtilizedInstances=(creds,underUtilizedInstances,callback)=>{
                     console.log(err);
                 }
                 if(response<=60) {
-                    underUtilizedInstances.push(instanceId);
+                    failed.push(instanceId);
                 }
+                else {
+                    passed.push(instanceId)
+                }
+                instanceId.push(instanceId);
             })
         }
-        callback(null,underUtilizedInstances);
+        callback(null,instanceIdList,passed,failed);
 })
     
 }
@@ -172,18 +189,26 @@ exports.unEncryptedAMIS = function(req, res) {
                 return
             }
             log.info("All Ami Ids List: " + JSON.stringify(allAmiIds));
-            let result = []
+            let passed = []
+            let failed=[]
+            let amisList=[]
             for (var j = 0; j < allAmiIds.length; j++) {
                 let blockDeviceMappings=allAmiIds[j].BlockDeviceMappings;
                 for(let x=0;x<blockDeviceMappings.length;x++) {
                     if(!blockDeviceMappings[x].Ebs.Encrypted){
-                        result.push(allAmiIds[j].ImageId);
+                        failed.push(allAmiIds[j].ImageId);
                     }
+                    else {
+                        passed.push(allAmiIds[j].ImageId);
+                    }
+                    amisList.push(allAmiIds[j].ImageId);
                 }
             }
             resultObject.success = true
             let data = {
-                unEncrytedAMIs : result
+                amisList,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -224,7 +249,7 @@ exports.unrestrictedSecurityGroupAttachedEC2Instance = function(req, res) {
         }
         log.info("Used SG Ids List: " + JSON.stringify(usedSGs));
 
-        AwsService.getAllUnrestrictedSecurityGroup(creds, usedSGs,function(err, listOfUnrestrictedSecurityGroups) {
+        AwsService.getAllUnrestrictedSecurityGroup(creds, usedSGs,function(err, passed,failed) {
             if (err) {
                 log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
                 resultObject.success = false
@@ -235,7 +260,9 @@ exports.unrestrictedSecurityGroupAttachedEC2Instance = function(req, res) {
             log.info("All Unrestricted SecurityGroup Ids List: " + JSON.stringify(listOfUnrestrictedSecurityGroups));
             resultObject.success = true
             let data = {
-                listOfUnrestrictedSecurityGroups : listOfUnrestrictedSecurityGroups
+                usedSGs,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -268,10 +295,17 @@ exports.unAssociatedEIPs = function(req, res) {
         }
         log.info("All Ami Ids List: " + JSON.stringify(listOfAddressDescription));
         let unAssociatedEIPs=[];
+        let passed=[];
+        let failed=[];
+        let EIPSList=[];
         for(let i=0;i<listOfAddressDescription.length;i++){
             if(!listOfAddressDescription[i].AssociationId) {
-                unAssociatedEIPs.push(listOfAddressDescription[i].PublicIp);
+                failed.push(listOfAddressDescription[i].PublicIp);
             }
+            else {
+                passed.push(listOfAddressDescription[i].PublicIp);
+            }
+            EIPSList.push(listOfAddressDescription[i].PublicIp);
         }
         resultObject.success = true
             let data = {
@@ -309,15 +343,20 @@ exports.unusedEc2KeyPairs = function(req, res) {
             return
         }
         log.info("All unused Ec2 Key Pairs List: " + JSON.stringify(listOfKeyPairs));
-        let unUsedEc2KeyPairs=[];
+        let listOfKeys=[];
+        let passed=[];
+        let failed=[];
         let keyPairsList=listOfKeyPairs.KeyPairs;
         console.log(keyPairsList);
         for(let i=0;i<keyPairsList.length;i++){
-            unUsedEc2KeyPairs.push(keyPairsList[i].KeyName);
+            failed.push(keyPairsList[i].KeyName);
+            listOfKeys.push(keyPairsList[i].KeyName);
         }
         resultObject.success = true
             let data = {
-                UnusedEc2keyPairsList : unUsedEc2KeyPairs
+                listOfKeys,
+                passed,
+                failed 
             }
             resultObject.data = data
             res.status(200).json(resultObject);

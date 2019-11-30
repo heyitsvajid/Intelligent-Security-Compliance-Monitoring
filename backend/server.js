@@ -31,6 +31,9 @@ app.use(function (req, res, next) {
   next();
 });
 
+//Environment File
+require('dotenv').config()
+
 //Router Configuration
 require('./routes/ec2Routes.js')(app);
 require('./routes/iamRoutes')(app);
