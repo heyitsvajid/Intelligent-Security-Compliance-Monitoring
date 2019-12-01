@@ -33,7 +33,7 @@ exports.keyRotationCheck = function(req, res) {
         }
         let passed=[];
         let failed=[];
-        let listIAMUsers=[];
+        let iamList=[];
         for(let i=0;i<listOfIAMUsers.length;i++){
             let CreatedDate=new Date(listOfIAMUsers[i].CreateDate);
             let currentDate=new Date();
@@ -43,13 +43,13 @@ exports.keyRotationCheck = function(req, res) {
             else {
                 passed.push(listOfIAMUsers[i].UserName);
             }
-            listIAMUsers.push(listOfIAMUsers[i].UserName);
+            iamList.push(listOfIAMUsers[i].UserName);
         }
         log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsersWithKeyMoreThan90DaysOld));
         
         resultObject.success = true
             let data = {
-                listIAMUsers,
+                iamList,
                 passed,
                 failed
             }
@@ -92,7 +92,7 @@ exports.unnecessaryAccessKeys = function(req, res) {
         }
         Promise.all(promises)
         .then(dataSet => {
-            let iamUsers=[];
+            let iamList=[];
             let passed=[];
             let failed=[];
             for(let j=0;j<dataSet.length;j++){
@@ -115,14 +115,14 @@ exports.unnecessaryAccessKeys = function(req, res) {
                      
             }
             for(let i=0;i<passed.length;i++){
-                iamUsers.push(passed[i]); 
+                iamList.push(passed[i]); 
             }
             for(let i=0;i<failed.length;i++){
-                iamUsers.push(failed[i]); 
+                iamList.push(failed[i]); 
             }
             resultObject.success = true
             let data = {
-                iamUsers,
+                iamList,
                 passed,
                 failed
             }
@@ -174,7 +174,7 @@ exports.iamUserswithAdminAccess = function(req, res) {
         }
         Promise.all(promises)
         .then(dataSet => {
-            let listOfUsers=[];
+            let iamList=[];
             let passed=[];
             let failed=[];
             for(let j=0;j<dataSet.length;j++){
@@ -185,16 +185,16 @@ exports.iamUserswithAdminAccess = function(req, res) {
                         failed.push(dataSet[j].userName);
                     }
                 }
-                listOfUsers.push(dataSet[j].userName);  
+                iamList.push(dataSet[j].userName);  
             }
-            for(let i=0;i<listOfUsers.length;i++){
-                if(failed.indexOf(listOfUsers[i])==-1){
-                    passed.push(listOfUsers[i]);
+            for(let i=0;i<iamList.length;i++){
+                if(failed.indexOf(iamList[i])==-1){
+                    passed.push(iamList[i]);
                 }
             }
             resultObject.success = true
             let data = {
-                listOfUsers,
+                iamList,
                 passed,
                 failed
             }
@@ -230,9 +230,9 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
         }
         log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsers));
         let listOfUsersWithPolicyEditAccess=new Set();
-        let listOfUsers=[];
+        let iamList=[];
         for(let i=0;i<listOfIAMUsers.length;i++){
-            listOfUsers.push(listOfIAMUsers[i].UserName);
+            iamList.push(listOfIAMUsers[i].UserName);
         }
         const promises = [];
         for(let i=0;i<listOfIAMUsers.length;i++){
@@ -260,14 +260,14 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
                     }
                 }  
             }
-            for(let i=0;i<listOfUsers.length;i++){
-                if(failed.indexOf(listOfUsers[i])==-1){
-                    passed.push(listOfUsers[i]);
+            for(let i=0;i<iamList.length;i++){
+                if(failed.indexOf(iamList[i])==-1){
+                    passed.push(iamList[i]);
                 }
             }
             resultObject.success = true
             let data = {
-                listOfUsers,
+                iamList,
                 passed,
                 failed
             }
@@ -326,7 +326,7 @@ exports.unusedIamUsers = function(req, res) {
         }
         Promise.all(promises)
         .then(dataSet => {
-            let listOfUsers=[];
+            let iamList=[];
             let passed=[];
             let failed=[];
             for(let j=0;j<dataSet.length;j++){
@@ -338,11 +338,11 @@ exports.unusedIamUsers = function(req, res) {
                     else {
                         passed.push(dataSet[j].userName);
                     }
-                    listOfUsers.push(dataSet[j].userName);
+                    iamList.push(dataSet[j].userName);
             }
             resultObject.success = true
             let data = {
-                listOfUsers,
+                iamList,
                 passed,
                 failed
             }
@@ -390,7 +390,7 @@ exports.sshKeyRotationCheck = function(req, res) {
         }
         Promise.all(promises)
         .then(dataSet => {
-            let listOfUsers=[];
+            let iamList=[];
             let passed=[];
             let failed=[];
             for(let j=0;j<dataSet.length;j++){
@@ -398,7 +398,7 @@ exports.sshKeyRotationCheck = function(req, res) {
                 let sshPublicKeys=detail.SSHPublicKeys;
                 if(sshPublicKeys.length==0){
                     failed.push(dataSet[j].userName);
-                    listOfUsers.push(dataSet[j].userName);
+                    iamList.push(dataSet[j].userName);
                     continue
                 }
                 for(let i=0;i<sshPublicKeys.length;i++){
@@ -406,19 +406,19 @@ exports.sshKeyRotationCheck = function(req, res) {
                     let currentDate=new Date();
                     if(Math.round((currentDate-CreatedDate)/(60*60*24))>90){
                         failed.push(dataSet[j].userName);
-                        listOfUsers.push(dataSet[j].userName);
+                        iamList.push(dataSet[j].userName);
                     }
                 }
                 
             }
-            for(let i=0;i<listOfUsers.length;i++){
-                if(failed.indexOf(listOfUsers[i])==-1){
-                    passed.push(listOfUsers[i]);
+            for(let i=0;i<iamList.length;i++){
+                if(failed.indexOf(iamList[i])==-1){
+                    passed.push(iamList[i]);
                 }
             }
             resultObject.success = true
             let data = {
-                listOfUsers,
+                iamList,
                 passed,
                 failed
             }

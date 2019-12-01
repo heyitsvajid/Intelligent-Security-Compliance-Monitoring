@@ -61,7 +61,7 @@ exports.unusedAmis = function(req, res) {
             log.info("All Ami Ids List: " + JSON.stringify(allAmiIds));
             let failed = [];
             let passed = [];
-            let imageIdList=[];
+            let ec2List=[];
             for (var j = 0; j < allAmiIds.length; j++) {
                 if (!usedAmiIds.includes(allAmiIds[j].ImageId)) {
                     failed.push(allAmiIds[j].ImageId);
@@ -69,11 +69,11 @@ exports.unusedAmis = function(req, res) {
                 else {
                     passed.push(allAmiIds[j].ImageId); 
                 }
-                imageIdList.push(allAmiIds[j].ImageId);
+                ec2List.push(allAmiIds[j].ImageId);
             }
             resultObject.success = true
             let data = {
-                imageIdList,
+                ec2List,
                 passed,
                 failed
             }
@@ -99,7 +99,7 @@ exports.underutilizedInstances = function(req, res) {
     let resultObject = new Model.ResultObject();
 
         let underUtilizedInstances=[];
-        getUnderUtilizedInstances(creds,underUtilizedInstances,function(err,instanceIdList,passed,failed) {
+        getUnderUtilizedInstances(creds,underUtilizedInstances,function(err,ec2List,passed,failed) {
             if (err) {
                 resultObject.success = false
                 resultObject.errorMessage = err.message
@@ -108,7 +108,7 @@ exports.underutilizedInstances = function(req, res) {
             }
             resultObject.success = true
             let data = {
-                instanceIdList,
+                ec2List,
                 passed,
                 failed
             }
@@ -191,7 +191,7 @@ exports.unEncryptedAMIS = function(req, res) {
             log.info("All Ami Ids List: " + JSON.stringify(allAmiIds));
             let passed = []
             let failed=[]
-            let amisList=[]
+            let ec2List=[]
             for (var j = 0; j < allAmiIds.length; j++) {
                 let blockDeviceMappings=allAmiIds[j].BlockDeviceMappings;
                 for(let x=0;x<blockDeviceMappings.length;x++) {
@@ -201,12 +201,12 @@ exports.unEncryptedAMIS = function(req, res) {
                     else {
                         passed.push(allAmiIds[j].ImageId);
                     }
-                    amisList.push(allAmiIds[j].ImageId);
+                    ec2List.push(allAmiIds[j].ImageId);
                 }
             }
             resultObject.success = true
             let data = {
-                amisList,
+                ec2List,
                 passed,
                 failed
             }
@@ -240,16 +240,16 @@ exports.unrestrictedSecurityGroupAttachedEC2Instance = function(req, res) {
             res.status(400).json(resultObject);
             return
         }
-        let usedSGs = [];
+        let securityGroupsSet = new Set();
         for (var i = 0; i < listOfEc2Description.length; i++) {
             securityGroups=listOfEc2Description[i].SecurityGroups;
             for(let j=0;j<securityGroups.length;j++){
-                usedSGs.push(securityGroups[i].GroupId);
+                securityGroupsSet.add(securityGroups[i].GroupId);
             }
         }
-        log.info("Used SG Ids List: " + JSON.stringify(usedSGs));
+        log.info("Used SG Ids List: " + JSON.stringify(securityGroupsSet));
 
-        AwsService.getAllUnrestrictedSecurityGroup(creds, usedSGs,function(err, passed,failed) {
+        AwsService.getAllUnrestrictedSecurityGroup(creds, securityGroupsSet,function(err, passedList,failedList) {
             if (err) {
                 log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
                 resultObject.success = false
@@ -257,10 +257,13 @@ exports.unrestrictedSecurityGroupAttachedEC2Instance = function(req, res) {
                 res.status(400).json(resultObject);
                 return
             }
-            log.info("All Unrestricted SecurityGroup Ids List: " + JSON.stringify(listOfUnrestrictedSecurityGroups));
+            log.info("All Unrestricted SecurityGroup Ids List: " + JSON.stringify(failedList));
             resultObject.success = true
+            ec2List=Array.from(securityGroupsSet);
+            passed=Array.from(passedList);
+            failed=Array.from(failedList);
             let data = {
-                usedSGs,
+                ec2List,
                 passed,
                 failed
             }
@@ -297,7 +300,7 @@ exports.unAssociatedEIPs = function(req, res) {
         let unAssociatedEIPs=[];
         let passed=[];
         let failed=[];
-        let EIPSList=[];
+        let ec2List=[];
         for(let i=0;i<listOfAddressDescription.length;i++){
             if(!listOfAddressDescription[i].AssociationId) {
                 failed.push(listOfAddressDescription[i].PublicIp);
@@ -305,11 +308,13 @@ exports.unAssociatedEIPs = function(req, res) {
             else {
                 passed.push(listOfAddressDescription[i].PublicIp);
             }
-            EIPSList.push(listOfAddressDescription[i].PublicIp);
+            ec2List.push(listOfAddressDescription[i].PublicIp);
         }
         resultObject.success = true
             let data = {
-                listOfUnAssociatedAddress : unAssociatedEIPs
+                ec2List,
+                passed,
+                failed
             }
             resultObject.data = data
             res.status(200).json(resultObject);
@@ -343,18 +348,18 @@ exports.unusedEc2KeyPairs = function(req, res) {
             return
         }
         log.info("All unused Ec2 Key Pairs List: " + JSON.stringify(listOfKeyPairs));
-        let listOfKeys=[];
+        let ec2List=[];
         let passed=[];
         let failed=[];
         let keyPairsList=listOfKeyPairs.KeyPairs;
         console.log(keyPairsList);
         for(let i=0;i<keyPairsList.length;i++){
-            failed.push(keyPairsList[i].KeyName);
-            listOfKeys.push(keyPairsList[i].KeyName);
+            passed.push(keyPairsList[i].KeyName);
+            ec2List.push(keyPairsList[i].KeyName);
         }
         resultObject.success = true
             let data = {
-                listOfKeys,
+                ec2List,
                 passed,
                 failed 
             }

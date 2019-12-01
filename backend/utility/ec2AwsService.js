@@ -1,3 +1,5 @@
+
+
 const AWS = require('aws-sdk')
 AWS.config.update({ region: 'us-west-1' })
 AWS.config.apiVersions = {
@@ -51,7 +53,7 @@ exports.getAllEc2InstanceInfo = function (creds, callback) {
                 listOfEc2Description.push(instances[j])
             }
         }
-        log.info("Returning with list: " + JSON.stringify(listOfEc2Description))
+        //log.info("Returning with list: " + JSON.stringify(listOfEc2Description))
         callback(null,listOfEc2Description)
     })
 }
@@ -98,10 +100,10 @@ exports.getMetricsStatistics = function (creds, instanceId, callback) {
 exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callback){
     let log = logger.getLogger(fileName + 'getAllUnrestrictedSecurityGroup API')
     log.info("Started")
-
+    log.info(Array.from(securityGroupsList));
     const ec2Client = new AWS.EC2({"credentials": creds});
     const params={
-        GroupIds: securityGroupsList
+        GroupIds: Array.from(securityGroupsList)
     };
 
     ec2Client.describeSecurityGroups(params, function (err, data) {
@@ -111,27 +113,44 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
             return
         }
         let unrestrictedSecurityGroups = [];
+        console.log(data);
         let securityGroups=data.SecurityGroups;
-        let passed=set();
-        let failed=set();
+        let passed=new Set();
+        let failed=new Set();
         for(let i=0;i<securityGroups.length;i++) {
             let ingress=securityGroups[i].IpPermissions;
             for(let j=0;j<ingress.length;j++) {
                 if(ingress[j].IpProtocol==-1){
                     for(let k=0;k<ingress[j].IpRanges.length;k++){
                         let trafficIp=ingress[j].IpRanges[k].CidrIp;
+                        console.log()
                         if(trafficIp==='0.0.0.0/0'){
-                            failed.push(securityGroups[i].GroupId);
+                            failed.add(securityGroups[i].GroupId);
                         }
                         else{
-                            passed.push(securityGroups[i].GroupId);
+                            passed.add(securityGroups[i].GroupId);
                         }
                     }
                 }
+                passed.add(securityGroups[i].GroupId);
             }
             
         }
-        log.info("Returning with list: " + JSON.stringify(unrestrictedSecurityGroups))
+        /*let values=passed.entries();
+        while(values.next().value){
+            value=values.next().value;
+            if(failed.has(value)){
+                passed.delete(value);
+            }
+        }*/
+
+        function removeAll(originalSet, toBeRemovedSet) {
+            [...toBeRemovedSet].forEach(function(v) {
+              originalSet.delete(v); 
+            });
+          }
+        removeAll(passed,failed);
+        log.info("Returning with list: " + JSON.stringify(failed))
         callback(null,passed,failed)
     })
 }
