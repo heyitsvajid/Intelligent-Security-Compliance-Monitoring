@@ -4,7 +4,7 @@ const AwsService = require('../utility/ec2AwsService.js');
 const fileName = "Controller: ";
 const AWS = require('aws-sdk');
 const creds = new AWS.Credentials({
-    accessKeyId: 'AKIAJIVGCX5EZE7PH75Q', secretAccessKey: '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', sessionToken: null
+    accessKeyId: process.env.ACCESS_KEY, secretAccessKey: process.env.SECRET_KEY, sessionToken: null
     });
 
 /**
