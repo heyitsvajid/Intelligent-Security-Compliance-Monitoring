@@ -270,7 +270,7 @@ unusedAmis() {
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"unEncryptedAMIS")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>UnEncrypted AMIs</b></h4></Col>
+                            <Col md="11"><h4><b>Unencrypted Amazon Machine Iamges</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.unEncryptedAMIS ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -288,7 +288,7 @@ unusedAmis() {
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"unrestrictedSecurityGroupAttachedEC2Instance")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>unrestrictedSecurityGroupAttachedEC2Instance</b></h4></Col>
+                            <Col md="11"><h4><b>Unrestricted SecurityGroups Attached to EC2 Instance</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.unrestrictedSecurityGroupAttachedEC2Instance ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -306,7 +306,7 @@ unusedAmis() {
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"unAssociatedEIPs")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>unAssociatedEIPsHeader</b></h4></Col>
+                            <Col md="11"><h4><b>Unassociated Elastic Ips</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.unAssociatedEIPs ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -324,7 +324,7 @@ unusedAmis() {
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"unusedEc2KeyPairs")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>unusedEc2KeyPairs</b></h4></Col>
+                            <Col md="11"><h4><b>Unused Ec2 Key Pairs</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.unusedEc2KeyPairs ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>

@@ -229,7 +229,7 @@ class IamComponent extends React.Component{
                     </CardHeader>
                     <CardBody>
                         <Row onClick={this.openService.bind(this,"keyRotationCheck")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>keyRotationCheck</b></h4></Col>
+                            <Col md="11"><h4><b>Key Rotation Check</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.keyRotationCheck ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -247,7 +247,7 @@ class IamComponent extends React.Component{
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"unnecessaryAccessKeys")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>unnecessaryAccessKeys</b></h4></Col>
+                            <Col md="11"><h4><b>Unnecessary Access Keys</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.unnecessaryAccessKeys ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -265,7 +265,7 @@ class IamComponent extends React.Component{
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"iamUserswithAdminAccess")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>iamUserswithAdminAccess</b></h4></Col>
+                            <Col md="11"><h4><b>Iam Users with Admin Access</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.iamUserswithAdminAccess ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -283,7 +283,7 @@ class IamComponent extends React.Component{
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"iamUserswithPolicyEditAccess")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>iamUserswithPolicyEditAccess</b></h4></Col>
+                            <Col md="11"><h4><b>Iam Users with Policy Edit Access</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.iamUserswithPolicyEditAccess ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -301,7 +301,7 @@ class IamComponent extends React.Component{
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"unusedIamUsers")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>unusedIamUsers</b></h4></Col>
+                            <Col md="11"><h4><b>Unused Iam Users</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.unusedIamUsers ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
@@ -319,7 +319,7 @@ class IamComponent extends React.Component{
                         <hr/>
 
                         <Row onClick={this.openService.bind(this,"sshKeyRotationCheck")} style={{cursor: "pointer"}}>
-                            <Col md="11"><h4><b>sshKeyRotationCheck</b></h4></Col>
+                            <Col md="11"><h4><b>Ssh Key Rotation Check</b></h4></Col>
                             <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.sshKeyRotationCheck ? faMinusSquare: faPlusSquare}/></Col>
                         </Row>
                         <Fade>
