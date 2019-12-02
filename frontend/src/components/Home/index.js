@@ -1,9 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
-import Rule from '../Rule/Rule'
 import API from '../API/index'
 import { AuthUserContext, withAuthorization, withEmailVerification } from '../Session';
-import Fade from 'react-reveal/Fade';
 import {
   Card,
   CardBody,
@@ -13,20 +11,16 @@ import {
   Row
 } from "reactstrap";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faPlusSquare,
-    faMinusSquare
-  } from "@fortawesome/free-regular-svg-icons";
+
 import {Tabs, Tab} from 'react-bootstrap';
 import CloudTrailComponent from "./cloudTrailComponent";
 import ElbComponent from './elbComponent';
 import KmsComponent from './kmsComponent';
 import Ec2Component from './ec2Component';
 import IamComponent from './iamComponent';
+import RDSComponent from './rdsComponent';
+import S3Component from './s3Component';
 
-const STATUS_PASSED = "PASS"
-const STATUS_FAILED = "FAIL"
 
 const HomePage = (match) => (
   <AuthUserContext.Consumer>
@@ -58,275 +52,10 @@ class ComplainceReport extends React.Component {
     let authUser = this.props.authUser
 
     this.state = {
-      s3: false,
       name: authUser ? authUser.name : "",
-      authUser: authUser,
-      s3FullControlAccessChartData: [],
-      s3FullControlAccessData: {},
-      s3FullControlAccessHeader:[], 
-      s3BucketEncryptionChartData: [],
-      s3BucketEncryptionData: {},
-      s3BucketEncryptionHeader:[],
-      s3BucketMfaDeleteChartData: [],
-      s3BucketMfaDeleteData: {},
-      s3BucketMfaDeleteHeader:[],
-      s3PublicAccessChartData: [],
-      s3PublicAccessData: {},
-      s3PublicAccessHeader:[],
-      s3BucketCustomerEncryptionChartData: [],
-      s3BucketCustomerEncryptionData: {},
-      s3BucketCustomerEncryptionHeader:[],
-      s3LimitByIpAccessChartData: [],
-      s3LimitByIpAccessData: {},
-      s3LimitByIpAccessHeader:[],  
-      s3BucketLoggingChartData: [],
-      s3BucketLoggingData: {},
-      s3BucketLoggingHeader:[],           
-      rds:false,
-      rdsAutomatedBackupChartData: [],
-      rdsAutomatedBackupData: {},
-      rdsAutomatedBackupHeader:[],    
-      rdsDeletionProtectionChartData: [],
-      rdsDeletionProtectionData: {},
-      rdsDeletionProtectionHeader:[],                 
-      rdsEncryptionChartData: [],
-      rdsEncryptionData: {},
-      rdsEncryptionHeader:[],                 
-      rdsIAMAuthenticationChartData: [],
-      rdsIAMAuthenticationData: {},
-      rdsIAMAuthenticationHeader:[], 
-    
-    };
-
-    this.s3FullControlAccess()
-    this.s3BucketEncryption()
-    this.s3BucketMfaDelete()
-    this.s3PublicAccess()
-    this.s3BucketCustomerEncryption()
-    this.s3LimitByIpAccess()    
-    this.s3BucketLogging()
-    this.rdsAutomatedBackup()
-    this.rdsDeletionProtection()
-    this.rdsEncryption()
-    this.rdsIAMAuthentication()
-    
-    this.openService = this.openService.bind(this)
+      authUser: authUser
+    };    
   }
-
-  openService(id) {
-    switch(id){
-        case 1:
-            this.setState({
-                s3:!this.state.s3
-            }) 
-        break    
-        case 2:
-          this.setState({
-              rds:!this.state.rds
-          }) 
-    }
-}
-
-getDataFromResponse(response, callback){
-  let passed = response.passed
-  let failed = response.failed
-  let passedCount = passed.length;
-  let failedCount = failed.length 
-  let header = ["Resource Name", "Status"]
-  let tableData = []
-  for(let i = 0; i<passed.length; i++){
-    let bucketData = [];  
-    bucketData.push(passed[i])        
-    bucketData.push(STATUS_PASSED)        
-    tableData.push(bucketData);
-  }
-  for(let i = 0; i<failed.length; i++){
-    let bucketData = [];  
-    bucketData.push(failed[i])        
-    bucketData.push(STATUS_FAILED)        
-    tableData.push(bucketData);
-  }
-  let chartData = [{ name: 'Buckets', passed: passedCount, failed: failedCount}]
-  callback(header, tableData, chartData)
-}
-
-rdsIAMAuthentication() {
-  API.rdsIAMAuthentication(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching rdsAutomatedBackup")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            rdsIAMAuthenticationChartData:chartData,
-            rdsIAMAuthenticationData:tableData,
-            rdsIAMAuthenticationHeader:header
-          })
-        })
-      }
-  })
-}
-
-rdsEncryption() {
-  API.rdsEncryption(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching rdsAutomatedBackup")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            rdsEncryptionChartData:chartData,
-            rdsEncryptionData:tableData,
-            rdsEncryptionHeader:header
-          })
-        })
-      }
-  })
-}
-
-rdsDeletionProtection() {
-  API.rdsDeletionProtection(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching rdsAutomatedBackup")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            rdsDeletionProtectionChartData:chartData,
-            rdsDeletionProtectionData:tableData,
-            rdsDeletionProtectionHeader:header
-          })
-        })
-      }
-  })
-}
-
-rdsAutomatedBackup() {
-  API.rdsAutomatedBackup(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching rdsAutomatedBackup")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            rdsAutomatedBackupChartData:chartData,
-            rdsAutomatedBackupData:tableData,
-            rdsAutomatedBackupHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3FullControlAccess() {
-  API.s3FullControlAccess(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3FullControlAccess")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3FullControlAccessChartData:chartData,
-            s3FullControlAccessData:tableData,
-            s3FullControlAccessHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3BucketEncryption() {
-  API.s3BucketEncryption(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3BucketEncryption")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3BucketEncryptionChartData:chartData,
-            s3BucketEncryptionData:tableData,
-            s3BucketEncryptionHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3BucketMfaDelete() {
-  API.s3BucketMfaDelete(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3BucketEncryption")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3BucketMfaDeleteChartData:chartData,
-            s3BucketMfaDeleteData:tableData,
-            s3BucketMfaDeleteHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3PublicAccess() {
-  API.s3PublicAccess(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3PublicAccess")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3PublicAccessChartData:chartData,
-            s3PublicAccessData:tableData,
-            s3PublicAccessHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3BucketCustomerEncryption() {
-  API.s3BucketCustomerEncryption(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3BucketCustomerEncryption")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3BucketCustomerEncryptionChartData:chartData,
-            s3BucketCustomerEncryptionData:tableData,
-            s3BucketCustomerEncryptionHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3LimitByIpAccess() {
-  API.s3LimitByIpAccess(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3BucketCustomerEncryption")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3LimitByIpAccessChartData:chartData,
-            s3LimitByIpAccessData:tableData,
-            s3LimitByIpAccessHeader:header
-          })
-        })
-      }
-  })
-}
-
-s3BucketLogging() {
-  API.s3BucketLogging(this.state.authUser, (err, response) => {
-      if(err){
-          console.log("Error fetching s3BucketLogging")
-      }else{
-        this.getDataFromResponse(response, (header, tableData, chartData) => {
-          this.setState({
-            s3BucketLoggingChartData:chartData,
-            s3BucketLoggingData:tableData,
-            s3BucketLoggingHeader:header
-          })
-        })
-      }
-  })
-}
-
-
 
   render = () => {
     return (
@@ -363,10 +92,10 @@ s3BucketLogging() {
                               <KmsComponent/>
                           </Tab>
                           <Tab title="RDS" eventKey="rds">
-                              <CloudTrailComponent/>
+                              <RDSComponent/>
                           </Tab>
                           <Tab title="S3" eventKey="s3">
-                              <CloudTrailComponent/>
+                              <S3Component/>
                           </Tab>
                           <Tab title="VPC" eventKey="vpc">
                               <CloudTrailComponent/>
