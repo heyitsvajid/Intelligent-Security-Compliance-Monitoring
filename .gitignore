@@ -74,6 +74,13 @@ typings/
 
 # FuseBox cache
 .fusebox/
+<<<<<<< HEAD
 
 .idea/
 backend/package-lock.json
+=======
+backend/log/log.json
+backend/controllers/Vajid Work Status.txt
+backend/log/log.json
+Intelligent-Security-Compliance-Monitoring.zip
+>>>>>>> a139db44a02cbd39b0adabbfc79ed958d48b462d

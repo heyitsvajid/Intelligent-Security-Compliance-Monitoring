@@ -1,19 +1,11 @@
 module.exports = function (app) {
 
-  var controller = require('../controllers/controller.js');
+  //var controller = require('../controllers/controller.js');
   let cloudTrailController = require('../controllers/cloudTrailController');
   let elbController = require('../controllers/elbController');
   let kmsController = require('../controllers/kmsController');
-
-  //Ping Server
-  app.get('/ping', controller.ping);
-
-  //Unused AMIs
-  app.post('/unusedAmis', controller.unusedAmis);
-
-  //Underutilized Instances
-  app.post('/underutilizedInstances', controller.underutilizedInstances);
-
+  let s3Ccontroller=require('../controllers/s3controller');
+  let rdsCcontroller=require('../controllers/rdsController');
   //Describe all the trails in account
   app.post('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
 
@@ -59,6 +51,24 @@ module.exports = function (app) {
   //Check cross account access for keys
   app.post('/checkCrossAccountAccess', kmsController.checkCrossAccountAccess);
 
+
+
+  // AWS S3 Bucket Public Access
+  app.post('/s3LimitByIpAccess', s3Ccontroller.s3LimitByIpAccess);
+
+  // AWS S3 Bucket Logging
+  app.post('/s3BucketLogging', s3Ccontroller.s3BucketLogging);
+
+  // AWS RDS Automated Backup
+  app.post('/rdsAutomatedBackup', rdsCcontroller.rdsAutomatedBackup);
+
+  // AWS RDS Deletion Protection
+  app.post('/rdsDeletionProtection', rdsCcontroller.rdsDeletionProtection);
+
+  // AWS RDS Encryption
+  app.post('/rdsEncryption', rdsCcontroller.rdsEncryption);
+
+  // AWS RDS IAMAuthentication
+  app.post('/rdsIAMAuthentication', rdsCcontroller.rdsIAMAuthentication);
+
 }
-
-

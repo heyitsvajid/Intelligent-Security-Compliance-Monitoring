@@ -22,6 +22,8 @@ import {Tabs, Tab} from 'react-bootstrap';
 import CloudTrailComponent from "./cloudTrailComponent";
 import ElbComponent from './elbComponent';
 import KmsComponent from './kmsComponent';
+import Ec2Component from './ec2Component';
+import IamComponent from './iamComponent';
 
 const STATUS_PASSED = "PASS"
 const STATUS_FAILED = "FAIL"
@@ -56,20 +58,58 @@ class ComplainceReport extends React.Component {
     let authUser = this.props.authUser
 
     this.state = {
-      "s3": false,
-      "name": authUser ? authUser.name : "",
-      "authUser": authUser,
+      s3: false,
+      name: authUser ? authUser.name : "",
+      authUser: authUser,
       s3FullControlAccessChartData: [],
       s3FullControlAccessData: {},
       s3FullControlAccessHeader:[], 
       s3BucketEncryptionChartData: [],
       s3BucketEncryptionData: {},
-      s3BucketEncryptionHeader:[]
+      s3BucketEncryptionHeader:[],
+      s3BucketMfaDeleteChartData: [],
+      s3BucketMfaDeleteData: {},
+      s3BucketMfaDeleteHeader:[],
+      s3PublicAccessChartData: [],
+      s3PublicAccessData: {},
+      s3PublicAccessHeader:[],
+      s3BucketCustomerEncryptionChartData: [],
+      s3BucketCustomerEncryptionData: {},
+      s3BucketCustomerEncryptionHeader:[],
+      s3LimitByIpAccessChartData: [],
+      s3LimitByIpAccessData: {},
+      s3LimitByIpAccessHeader:[],  
+      s3BucketLoggingChartData: [],
+      s3BucketLoggingData: {},
+      s3BucketLoggingHeader:[],           
+      rds:false,
+      rdsAutomatedBackupChartData: [],
+      rdsAutomatedBackupData: {},
+      rdsAutomatedBackupHeader:[],    
+      rdsDeletionProtectionChartData: [],
+      rdsDeletionProtectionData: {},
+      rdsDeletionProtectionHeader:[],                 
+      rdsEncryptionChartData: [],
+      rdsEncryptionData: {},
+      rdsEncryptionHeader:[],                 
+      rdsIAMAuthenticationChartData: [],
+      rdsIAMAuthenticationData: {},
+      rdsIAMAuthenticationHeader:[], 
+    
     };
 
-    this.s3FullControlAccess(authUser)
-    this.s3BucketEncryption(authUser)
-    this.s3FullControlAccess = this.s3FullControlAccess.bind(this)
+    this.s3FullControlAccess()
+    this.s3BucketEncryption()
+    this.s3BucketMfaDelete()
+    this.s3PublicAccess()
+    this.s3BucketCustomerEncryption()
+    this.s3LimitByIpAccess()    
+    this.s3BucketLogging()
+    this.rdsAutomatedBackup()
+    this.rdsDeletionProtection()
+    this.rdsEncryption()
+    this.rdsIAMAuthentication()
+    
     this.openService = this.openService.bind(this)
   }
 
@@ -80,6 +120,10 @@ class ComplainceReport extends React.Component {
                 s3:!this.state.s3
             }) 
         break    
+        case 2:
+          this.setState({
+              rds:!this.state.rds
+          }) 
     }
 }
 
@@ -104,6 +148,70 @@ getDataFromResponse(response, callback){
   }
   let chartData = [{ name: 'Buckets', passed: passedCount, failed: failedCount}]
   callback(header, tableData, chartData)
+}
+
+rdsIAMAuthentication() {
+  API.rdsIAMAuthentication(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsIAMAuthenticationChartData:chartData,
+            rdsIAMAuthenticationData:tableData,
+            rdsIAMAuthenticationHeader:header
+          })
+        })
+      }
+  })
+}
+
+rdsEncryption() {
+  API.rdsEncryption(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsEncryptionChartData:chartData,
+            rdsEncryptionData:tableData,
+            rdsEncryptionHeader:header
+          })
+        })
+      }
+  })
+}
+
+rdsDeletionProtection() {
+  API.rdsDeletionProtection(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsDeletionProtectionChartData:chartData,
+            rdsDeletionProtectionData:tableData,
+            rdsDeletionProtectionHeader:header
+          })
+        })
+      }
+  })
+}
+
+rdsAutomatedBackup() {
+  API.rdsAutomatedBackup(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching rdsAutomatedBackup")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            rdsAutomatedBackupChartData:chartData,
+            rdsAutomatedBackupData:tableData,
+            rdsAutomatedBackupHeader:header
+          })
+        })
+      }
+  })
 }
 
 s3FullControlAccess() {
@@ -138,6 +246,88 @@ s3BucketEncryption() {
   })
 }
 
+s3BucketMfaDelete() {
+  API.s3BucketMfaDelete(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketEncryption")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3BucketMfaDeleteChartData:chartData,
+            s3BucketMfaDeleteData:tableData,
+            s3BucketMfaDeleteHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3PublicAccess() {
+  API.s3PublicAccess(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3PublicAccess")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3PublicAccessChartData:chartData,
+            s3PublicAccessData:tableData,
+            s3PublicAccessHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3BucketCustomerEncryption() {
+  API.s3BucketCustomerEncryption(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketCustomerEncryption")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3BucketCustomerEncryptionChartData:chartData,
+            s3BucketCustomerEncryptionData:tableData,
+            s3BucketCustomerEncryptionHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3LimitByIpAccess() {
+  API.s3LimitByIpAccess(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketCustomerEncryption")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3LimitByIpAccessChartData:chartData,
+            s3LimitByIpAccessData:tableData,
+            s3LimitByIpAccessHeader:header
+          })
+        })
+      }
+  })
+}
+
+s3BucketLogging() {
+  API.s3BucketLogging(this.state.authUser, (err, response) => {
+      if(err){
+          console.log("Error fetching s3BucketLogging")
+      }else{
+        this.getDataFromResponse(response, (header, tableData, chartData) => {
+          this.setState({
+            s3BucketLoggingChartData:chartData,
+            s3BucketLoggingData:tableData,
+            s3BucketLoggingHeader:header
+          })
+        })
+      }
+  })
+}
+
+
+
   render = () => {
     return (
               <Container fluid className="p-0">
@@ -152,51 +342,22 @@ s3BucketEncryption() {
                       </Col>
                       </Row>
                     </CardHeader>
-                  <CardBody>
-                      {/*<div>*/}
-                      {/*<Row onClick={this.openService.bind(this,1)}>*/}
-                      {/*    <Col md="11"><h4><b>Simple Storage Service (S3)</b></h4></Col>*/}
-                      {/*    <Col md="1"><FontAwesomeIcon size="lg" icon={this.state.s3 ? faMinusSquare: faPlusSquare}/></Col>*/}
-                      {/*</Row>*/}
-                      {/*<Fade>*/}
-                      {/*<div  id="s3FullControlAccess" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>*/}
-                      {/*{*/}
-                      {/*      this.state.s3FullControlAccessData.length > 0 ?*/}
-                      {/*      <Rule chartData={this.state.s3FullControlAccessChartData}*/}
-                      {/*      tableHeaders={this.state.s3FullControlAccessHeader}*/}
-                      {/*      tableTitle={"S3 Full Control Access"}*/}
-                      {/*      tableData={this.state.s3FullControlAccessData} />*/}
-                      {/*      : "Service not in use."*/}
-                      {/*}*/}
-                      {/*</div>*/}
-                      {/*<div  id="s3BucketEncryption" className="mt-3" style={{display: this.state.s3 ? 'block' : 'none',transition: 'display 1s'}}>*/}
-                      {/*{*/}
-                      {/*      this.state.s3BucketEncryptionData.length > 0 ?*/}
-                      {/*      <Rule chartData={this.state.s3BucketEncryptionChartData}*/}
-                      {/*      tableHeaders={this.state.s3BucketEncryptionHeader}*/}
-                      {/*      tableTitle={"S3 Bucket Encryption"}*/}
-                      {/*      tableData={this.state.s3BucketEncryptionData} />*/}
-                      {/*      : "Service not in use."*/}
-                      {/*}*/}
-                      {/*</div>*/}
-                      {/*</Fade>*/}
-                      {/*<hr/>*/}
-                      {/*</div>*/}
+                  <CardBody>             
                       <Tabs id="tabView" defaultActiveKey="autoScaling">
-                          <Tab title="Auto Scaling" eventKey="autoScaling">
+                      <Tab title="Auto Scaling" eventKey="autoScaling">
                               <CloudTrailComponent/>
                           </Tab>
                           <Tab title="Cloud Trail" eventKey="cloudTrail">
                               <CloudTrailComponent/>
                           </Tab>
                           <Tab title="EC2" eventKey="ec2">
-                              <CloudTrailComponent/>
+                              <Ec2Component/>
                           </Tab>
                           <Tab title="ELB" eventKey="elb">
                               <ElbComponent/>
                           </Tab>
                           <Tab title="IAM" eventKey="iam">
-                              <CloudTrailComponent/>
+                              <IamComponent/>
                           </Tab>
                           <Tab title="KMS" eventKey="kms">
                               <KmsComponent/>
@@ -210,6 +371,7 @@ s3BucketEncryption() {
                           <Tab title="VPC" eventKey="vpc">
                               <CloudTrailComponent/>
                           </Tab>
+                          
                       </Tabs>
                   </CardBody>
                 </Card>
