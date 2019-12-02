@@ -228,7 +228,7 @@ unusedAmis() {
                     <CardHeader>
                         <Row className="mt-3">
                             <Col style = {{textAlign: 'center'}}>
-                                <h1 style = {{color: '#2698da ', fontSize: 20}}>Cloud Trail Service</h1>
+                                <h1 style = {{color: '#2698da ', fontSize: 20}}>Elastic Compute Cloud (EC2)</h1>
                             </Col>
                         </Row>
                     </CardHeader>

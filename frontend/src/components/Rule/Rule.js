@@ -26,8 +26,6 @@ class Rule extends React.Component {
         <div  className="mt-3 mb-3">
           <Row>
           <Col md="7">
-          <h4><b>Rule: </b>{this.state.tableTitle}</h4>
-
             {
               this.state.tableData.length > 0 ?
               <RuleTable headers = {this.state.tableHeaders} rows = {this.state.tableData} title = {this.state.tableTitle} />
