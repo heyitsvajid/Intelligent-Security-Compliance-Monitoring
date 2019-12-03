@@ -72,7 +72,7 @@ class ComplainceReport extends React.Component {
                       </Row>
                     </CardHeader>
                   <CardBody>             
-                      <Tabs id="tabView" defaultActiveKey="vpc">
+                      <Tabs id="tabView" defaultActiveKey="cloudTrail">
                       <Tab title="Auto Scaling" eventKey="autoScaling">
                               <CloudTrailComponent/>
                           </Tab>
