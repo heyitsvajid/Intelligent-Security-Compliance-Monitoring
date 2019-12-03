@@ -6,6 +6,8 @@ module.exports = function (app) {
   let kmsController = require('../controllers/kmsController');
   let s3Ccontroller=require('../controllers/s3controller');
   let rdsCcontroller=require('../controllers/rdsController');
+  let networkController = require('../controllers/networkController');
+
   //Describe all the trails in account
   app.post('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
 
@@ -84,5 +86,9 @@ app.post('/s3BucketLogging', s3Ccontroller.s3BucketLogging);
 
   // AWS RDS IAMAuthentication
   app.post('/rdsIAMAuthentication', rdsCcontroller.rdsIAMAuthentication);
+
+  //Exposed security groups
+  app.post('/securityGroups', networkController.getAllSecurityGroups);
+
 
 }
