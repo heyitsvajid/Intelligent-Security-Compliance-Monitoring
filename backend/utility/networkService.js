@@ -9,7 +9,8 @@ const creds = new AWS.Credentials({
 let getAllSecurityGroups = function (params={},callback){
     let log = logger.getLogger(fileName + 'getAllSecurityGroups');
     log.info("Started");
-    AWS.config.update({ region: 'us-west-2' })
+    //Passing region for region specific data
+    //AWS.config.update({ region: 'us-west-2' })
     const ec2Client = new AWS.EC2({"credentials": creds});
     ec2Client.describeSecurityGroups(params, function(err,data){
         if(err){
