@@ -8,8 +8,8 @@ exports.getAllTrailsInfo = (req, res) => {
     let log = logger.getLogger(fileName + 'describeTrails API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -34,8 +34,8 @@ exports.checkAccessLoggingForBuckets = (req, res) => {
     let log = logger.getLogger(fileName + 'checkAccessLoggingForBuckets API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -84,8 +84,8 @@ exports.checkMfaDeleteForBuckets = (req, res) => {
     let log = logger.getLogger(fileName + 'checkMfaForBuckets API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -134,8 +134,8 @@ exports.checkInsecureBuckets = (req, res) => {
     let log = logger.getLogger(fileName + 'checkInsecureBuckets API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -188,8 +188,8 @@ exports.checkLogFileEncryption = (req, res) => {
     let log = logger.getLogger(fileName + 'checkLogFileEncryption API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -223,8 +223,8 @@ exports.checkMultiRegionAccess = (req, res) => {
     let log = logger.getLogger(fileName + 'checkMultiRegionAccess API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -258,8 +258,8 @@ exports.checkLogFileIntegrityValidation = (req, res) => {
     let log = logger.getLogger(fileName + 'checkLogFileIntegrityValidation API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 

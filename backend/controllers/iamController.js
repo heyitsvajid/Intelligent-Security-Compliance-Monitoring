@@ -5,7 +5,7 @@ const fileName = "IAM Controller: ";
 const AWS = require('aws-sdk');
 var async = require("async");
 const creds = new AWS.Credentials({
-    accessKeyId: process.env.ACCESS_KEY, secretAccessKey: process.env.SECRET_KEY, sessionToken: null
+    accessKeyId: process.env.AWSAccessKeyId, secretAccessKey: process.env.AWSSecretKey, sessionToken: null
     });
 
 /**
@@ -45,7 +45,7 @@ exports.keyRotationCheck = function(req, res) {
             }
             iamList.push(listOfIAMUsers[i].UserName);
         }
-        log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsersWithKeyMoreThan90DaysOld));
+        log.info("All Users with Key More than 90 days old : " + JSON.stringify(failed));
         
         resultObject.success = true
             let data = {
@@ -310,7 +310,7 @@ exports.unusedIamUsers = function(req, res) {
             let CreatedDate=new Date(listOfIAMUsers[i].CreateDate);
             let currentDate=new Date();
             if(Math.round((currentDate-CreatedDate)/(60*60*24))>90)
-            listOfIAMUsersWithKeyMoreThan90DaysOld.push(listOfIAMUsers[i].UserName);
+                listOfIAMUsersWithKeyMoreThan90DaysOld.push(listOfIAMUsers[i].UserName);
         }
         let listOfUnusedIAMUsers=new Set();
         const promises = [];
