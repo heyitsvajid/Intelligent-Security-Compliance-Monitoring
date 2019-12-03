@@ -84,7 +84,7 @@ class Firebase {
             
             let awsAccessKeyId = ""
             let awsSecretKey = ""
-            if(dbUser && dbUser.pdfDataEntry){
+            if(dbUser){
               awsAccessKeyId = dbUser.awsAccessKeyId
               awsSecretKey = dbUser.awsSecretKey
             }
@@ -94,8 +94,8 @@ class Firebase {
               email: authUser.email,
               emailVerified: true,
               providerData: authUser.providerData,
-              awsSecretKey,
-              awsAccessKeyId
+              awsSecretKey:awsSecretKey,
+              awsAccessKeyId:awsAccessKeyId
             };
 
             next(authUser);
