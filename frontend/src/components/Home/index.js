@@ -73,34 +73,33 @@ class ComplainceReport extends React.Component {
                     </CardHeader>
                   <CardBody>             
                       <Tabs id="tabView" defaultActiveKey="cloudTrail">
-                      <Tab title="Auto Scaling" eventKey="autoScaling">
+                          {/* <Tab title="Auto Scaling" eventKey="autoScaling">
                               <CloudTrailComponent/>
-                          </Tab>
+                          </Tab> */}
                           <Tab title="Cloud Trail" eventKey="cloudTrail">
-                              <CloudTrailComponent/>
+                              <CloudTrailComponent authUser={this.state.authUser} />
                           </Tab>
                           <Tab title="EC2" eventKey="ec2">
-                              <Ec2Component/>
+                              <Ec2Component authUser={this.state.authUser} />
                           </Tab>
                           <Tab title="ELB" eventKey="elb">
-                              <ElbComponent/>
+                              <ElbComponent authUser={this.state.authUser} />
                           </Tab>
                           <Tab title="IAM" eventKey="iam">
-                              <IamComponent/>
+                              <IamComponent authUser={this.state.authUser} />
                           </Tab>
                           <Tab title="KMS" eventKey="kms">
-                              <KmsComponent/>
+                              <KmsComponent authUser={this.state.authUser} />
                           </Tab>
                           <Tab title="RDS" eventKey="rds">
-                              <RDSComponent/>
-    </Tab>
+                              <RDSComponent authUser={this.state.authUser} />
+                          </Tab>
                           <Tab title="S3" eventKey="s3">
-                              <S3Component/>
+                              <S3Component authUser={this.state.authUser} />
                           </Tab>
                           <Tab title="VPC" eventKey="vpc">
-                              <NetworkComponent/>
+                              <NetworkComponent authUser={this.state.authUser} />
                           </Tab>
-                          
                       </Tabs>
                   </CardBody>
                 </Card>
