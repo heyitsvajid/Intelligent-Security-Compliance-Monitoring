@@ -20,7 +20,7 @@ import Ec2Component from './ec2Component';
 import IamComponent from './iamComponent';
 import RDSComponent from './rdsComponent';
 import S3Component from './s3Component';
-
+import NetworkComponent from './networkComponent';
 
 const HomePage = (match) => (
   <AuthUserContext.Consumer>
@@ -72,7 +72,7 @@ class ComplainceReport extends React.Component {
                       </Row>
                     </CardHeader>
                   <CardBody>             
-                      <Tabs id="tabView" defaultActiveKey="autoScaling">
+                      <Tabs id="tabView" defaultActiveKey="vpc">
                       <Tab title="Auto Scaling" eventKey="autoScaling">
                               <CloudTrailComponent/>
                           </Tab>
@@ -93,12 +93,12 @@ class ComplainceReport extends React.Component {
                           </Tab>
                           <Tab title="RDS" eventKey="rds">
                               <RDSComponent/>
-                          </Tab>
+    </Tab>
                           <Tab title="S3" eventKey="s3">
                               <S3Component/>
                           </Tab>
                           <Tab title="VPC" eventKey="vpc">
-                              <CloudTrailComponent/>
+                              <NetworkComponent/>
                           </Tab>
                           
                       </Tabs>
