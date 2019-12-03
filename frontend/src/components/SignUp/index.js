@@ -61,7 +61,7 @@ class SignUpFormBase extends Component {
   }
 
   onSubmit = event => {
-    const { username, email, passwordOne, awsAccessKeyId, awsSecretKey } = this.state;
+    const { username, email, passwordOne } = this.state;
 
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
@@ -69,9 +69,7 @@ class SignUpFormBase extends Component {
         // Create a user in your Firebase realtime database
         return this.props.firebase.user(authUser.user.uid).set({
           username,
-          email,
-          awsAccessKeyId,
-          awsSecretKey
+          email
         });
       })
       .then(() => {
@@ -106,17 +104,13 @@ class SignUpFormBase extends Component {
       passwordOne,
       passwordTwo,
       error,
-      awsSecretKey,
-      awsAccessKeyId
     } = this.state;
 
     const isInvalid =
       passwordOne !== passwordTwo ||
       passwordOne === '' ||
       email === '' ||
-      username === '' ||
-      awsSecretKey === '' ||
-      awsAccessKeyId === '' ;
+      username === '';
   
     return (
       <React.Fragment>
@@ -150,29 +144,6 @@ class SignUpFormBase extends Component {
                   onChange={this.onChange}        
                 />
               </FormGroup>
-              <FormGroup>
-                <Label>AWS Access Key</Label>
-                <Input
-                  bsSize="lg"
-                  type="password"
-                  placeholder="Enter AWSAccessKeyId"
-                  name="awsAccessKeyId"
-                  value={awsAccessKeyId}
-                  onChange={this.onChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>AWS Secret Key</Label>
-                <Input
-                  bsSize="lg"
-                  type="password"
-                  placeholder="Enter AWSSecretKey"
-                  name="awsSecretKey"
-                  value={awsSecretKey}
-                  onChange={this.onChange}
-                />
-              </FormGroup>
-
               <FormGroup>
                 <Label>Password</Label>
                 <Input

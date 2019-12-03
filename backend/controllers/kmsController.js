@@ -8,8 +8,8 @@ exports.checkExposedKeys = (req, res) => {
     let log = logger.getLogger(fileName + 'checkExposedKeys API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -69,8 +69,8 @@ exports.checkCrossAccountAccess = (req, res) => {
     let log = logger.getLogger(fileName + 'checkCrossAccountAccess API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
     let callerIdentity = {};

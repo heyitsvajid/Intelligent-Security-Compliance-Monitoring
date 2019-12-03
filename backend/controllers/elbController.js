@@ -8,8 +8,8 @@ exports.checkElbListenerSecurity = (req, res) => {
     let log = logger.getLogger(fileName + 'checkListenerSecurity API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -67,8 +67,8 @@ exports.checkElbHealth = (req, res) => {
     let log = logger.getLogger(fileName + 'checkElbHealth API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -120,8 +120,8 @@ exports.checkIdleElbs = (req, res) => {
     let log = logger.getLogger(fileName + 'checkIdleElbs API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -188,8 +188,8 @@ exports.checkElbSecurityGroup = (req, res) => {
     let log = logger.getLogger(fileName + 'checkElbSecurityGroup API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -260,8 +260,8 @@ exports.checkInternetFacingElbs = (req, res) => {
     let log = logger.getLogger(fileName + 'checkInternetFacingElbs API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 
@@ -295,8 +295,8 @@ exports.checkElbDeleteProtection = (req, res) => {
     let log = logger.getLogger(fileName + 'checkElbDeleteProtection API');
     let resultObject = new Model.ResultObject();
     const credentials = new AWS.Credentials({
-        accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey,
         sessionToken: null
     });
 

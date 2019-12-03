@@ -79,7 +79,6 @@ class NetworkComponent extends React.Component{
             if(err) console.log("Error fetching security group info");
             else{
                 this.getDataFromResponse(response, (header, tableData, chartData) =>{
-                    debugger
                     this.setState(
                         {
                             securityGroupsAccessChartData:chartData,
