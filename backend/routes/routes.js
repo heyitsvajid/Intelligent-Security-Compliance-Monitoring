@@ -7,6 +7,7 @@ module.exports = function (app) {
   let s3Ccontroller=require('../controllers/s3controller');
   let rdsCcontroller=require('../controllers/rdsController');
   let networkController = require('../controllers/networkController');
+  let autoscalingController = require('../controllers/autoscalingController');
 
   //Describe all the trails in account
   app.post('/getAllTrailsInfo', cloudTrailController.getAllTrailsInfo);
@@ -89,6 +90,6 @@ app.post('/s3BucketLogging', s3Ccontroller.s3BucketLogging);
 
   //Exposed security groups
   app.post('/securityGroups', networkController.getAllSecurityGroups);
-
+  app.post('/autoScaling', autoscalingController.getAllAutoScaling);
 
 }
