@@ -1,3 +1,4 @@
+//This file specifies the API paths for all the services
 module.exports = function (app) {
 
   //var controller = require('../controllers/controller.js');
