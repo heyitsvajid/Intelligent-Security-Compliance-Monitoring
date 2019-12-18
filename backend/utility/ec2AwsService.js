@@ -12,6 +12,7 @@ exports.getAllAmiInfo = function (creds, callback) {
     let log = logger.getLogger(fileName + 'getAllAmis')
     log.info("Started")
 
+    // Create an instance of AWS SDK to invoked AWS APIs
     const ec2Client = new AWS.EC2({"credentials": creds});
 
     //Get only self images.
@@ -20,8 +21,9 @@ exports.getAllAmiInfo = function (creds, callback) {
             "self"
         ]
     };
+    // Invoke AWS API to get the details of existing EC2 images
     ec2Client.describeImages(params, function (err, response) {
-        if (err){
+        if (err){ // To handle errors occurred while calling AWS API and return error message
             log.error("Error Calling describeImages: " + JSON.stringify(err));
             callback(err,null)
             return
@@ -29,7 +31,7 @@ exports.getAllAmiInfo = function (creds, callback) {
         console.log(response);
         let images = response.Images;
         log.info("Returning with list: " + JSON.stringify(images))
-        callback(null,images)
+        callback(null,images) // return list of all existing images an their configuration
     })
 }
 
@@ -38,9 +40,11 @@ exports.getAllEc2InstanceInfo = function (creds, callback) {
     let log = logger.getLogger(fileName + 'getAllEc2Info API')
     log.info("Started")
 
+    // Create an instance of AWS SDK to invoked AWS APIs
     const ec2Client = new AWS.EC2({"credentials": creds});
+    // Invoke AWS API to get the details of all existing instances
     ec2Client.describeInstances({}, function (err, data) {
-        if (err) {
+        if (err) { // To handle errors occurred while calling AWS API and return error message
             log.error("Error Calling describeInstances: " + JSON.stringify(err));
             callback(err,null)
             return
@@ -54,7 +58,7 @@ exports.getAllEc2InstanceInfo = function (creds, callback) {
             }
         }
         //log.info("Returning with list: " + JSON.stringify(listOfEc2Description))
-        callback(null,listOfEc2Description)
+        callback(null,listOfEc2Description) // return list of all existing instances
     })
 }
 
@@ -63,12 +67,13 @@ exports.getMetricsStatistics = function (creds, instanceId, callback) {
     let log = logger.getLogger(fileName + 'getMetricsStatistics')
     log.info("Started")
 
+    // Create an instance of AWS SDK to invoked AWS APIs
     let cloudwatchClient = new AWS.CloudWatch({"credentials": creds});
     console.log(cloudwatchClient);
     var MS_PER_MINUTE = 60000;
     var myStartDate = new Date(new Date - 60 * MS_PER_MINUTE);
     //console.log(date);
-    var params = {
+    var params = { // create parameters to get metrics data
         EndTime: new Date(),
         StartTime : myStartDate,
         MetricName : "CPUUtilization",
@@ -85,15 +90,16 @@ exports.getMetricsStatistics = function (creds, instanceId, callback) {
             /* more items */
           ]
     };
+    // Invoke AWS API to get the metric details of requested instance
     cloudwatchClient.getMetricStatistics(params, function (err, response) {
-        if (err){
+        if (err){ // To handle errors occurred while calling AWS API and return error message
             log.error("Error Calling getMetricsStatistics: " + JSON.stringify(err));
             callback(err,null)
             return
         }
         let metrics = response.Datapoints;
         log.info("Returning with list: " + JSON.stringify(metrics[0].Average))
-        callback(null,metrics[0].Average)
+        callback(null,metrics[0].Average) // return the average usage metrics of requested instance
     })
 }
 
@@ -101,13 +107,15 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
     let log = logger.getLogger(fileName + 'getAllUnrestrictedSecurityGroup API')
     log.info("Started")
     log.info(Array.from(securityGroupsList));
+    // Create an instance of AWS SDK to invoked AWS APIs
     const ec2Client = new AWS.EC2({"credentials": creds});
     const params={
         GroupIds: Array.from(securityGroupsList)
     };
 
+    // Invoke AWS API to get the details of security groups associated with the requested instance
     ec2Client.describeSecurityGroups(params, function (err, data) {
-        if (err) {
+        if (err) { // To handle errors occurred while calling AWS API and return error message
             log.error("Error Calling describeSecurityGroups: " + JSON.stringify(err));
             callback(err,null)
             return
@@ -117,6 +125,7 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
         let securityGroups=data.SecurityGroups;
         let passed=new Set();
         let failed=new Set();
+        // For each security group, check if it is open to public
         for(let i=0;i<securityGroups.length;i++) {
             let ingress=securityGroups[i].IpPermissions;
             for(let j=0;j<ingress.length;j++) {
@@ -151,7 +160,7 @@ exports.getAllUnrestrictedSecurityGroup=function(creds,securityGroupsList,callba
           }
         removeAll(passed,failed);
         log.info("Returning with list: " + JSON.stringify(failed))
-        callback(null,passed,failed)
+        callback(null,passed,failed) // return list of security groups associated with requested instance that are open to public
     })
 }
 
@@ -159,16 +168,18 @@ exports.describeAddresses=function(creds,callback){
     let log = logger.getLogger(fileName + 'getAllUnrestrictedSecurityGroup API')
     log.info("Started")
 
+    // Create an instance of AWS SDK to invoked AWS APIs
     const ec2Client = new AWS.EC2({"credentials": creds});
     const params={
     };
 
+    // Invoke AWS API to get the details of elastic IPs associated with requested instance
     ec2Client.describeAddresses(params,function(err,listAddressDescription){
-        if (err) {
+        if (err) { // To handle errors occurred while calling AWS API and return error message
             log.error("Error Calling describeSecurityGroups: " + JSON.stringify(err));
             callback(err,null)
             return
         }
-    callback(null,listAddressDescription.Addresses);
+    callback(null,listAddressDescription.Addresses);// return list of elastic IPs associated with requested instance
     })
 }

@@ -23,8 +23,9 @@ exports.keyRotationCheck = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
+    // This gets the configuration details of all IAM users
     AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
-        if (err) {
+        if (err) { // To handle any errors during the service call and return error message
             log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
             resultObject.success = false
             resultObject.errorMessage = err.message
@@ -34,6 +35,7 @@ exports.keyRotationCheck = function(req, res) {
         let passed=[];
         let failed=[];
         let iamList=[];
+        // For each IAM user, check the created date to determine if it is older than 90 days
         for(let i=0;i<listOfIAMUsers.length;i++){
             let CreatedDate=new Date(listOfIAMUsers[i].CreateDate);
             let currentDate=new Date();
@@ -54,6 +56,8 @@ exports.keyRotationCheck = function(req, res) {
                 failed
             }
             resultObject.data = data
+        // return result object with list of users created older than 90 days,
+        // list of users created within 90 days and list of all IAM users
             res.status(200).json(resultObject);
     })
 }
@@ -73,8 +77,9 @@ exports.unnecessaryAccessKeys = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
+    // This gets the configuration details of all IAM users
     AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
-        if (err) {
+        if (err) { // To handle any errors during the service call and return error message
             log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
             resultObject.success = false
             resultObject.errorMessage = err.message
@@ -85,6 +90,7 @@ exports.unnecessaryAccessKeys = function(req, res) {
         let listOfUsersWithUnnecessaryAccessKeys=new Set();
         let listOfUsers=[];
         const promises = [];
+        // For each IAM user, get the details of access keys associated with the user
         for(let i=0;i<listOfIAMUsers.length;i++){
             promises.push(new Promise(resolve=>AwsService.getAllAccessKeys(creds,listOfIAMUsers[i].UserName,function(err,data){
             resolve(data)
@@ -95,6 +101,7 @@ exports.unnecessaryAccessKeys = function(req, res) {
             let iamList=[];
             let passed=[];
             let failed=[];
+            // For each access key received from the data, check AccessKeyMetadata parameter to check if the access is unnecessary
             for(let j=0;j<dataSet.length;j++){
                 let accessKeyMetadata=dataSet[j].AccessKeyMetadata
                     if(accessKeyMetadata.length>1){
@@ -127,6 +134,7 @@ exports.unnecessaryAccessKeys = function(req, res) {
                 failed
             }
             resultObject.data = data
+            // return result object with list of necessary access keys, list of unnecessary access keys and list of all IAM users
             res.status(200).json(resultObject);
         })
         
@@ -149,8 +157,9 @@ exports.iamUserswithAdminAccess = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
+    // This gets the configuration details of all IAM users
     AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
-        if (err) {
+        if (err) { // To handle any errors during the service call and return error message
             log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
             resultObject.success = false
             resultObject.errorMessage = err.message
@@ -161,6 +170,7 @@ exports.iamUserswithAdminAccess = function(req, res) {
         let listOfUsersWithAdminAccess=new Set();
         
         const promises = [];
+        // For each IAM user, get the list of policies attacked to each user
         for(let i=0;i<listOfIAMUsers.length;i++){
             let userName=listOfIAMUsers[i].UserName;
             promises.push(new Promise(resolve=>AwsService.getAllAttachedPolicies(creds,listOfIAMUsers[i].UserName,function(err,data){
@@ -177,6 +187,7 @@ exports.iamUserswithAdminAccess = function(req, res) {
             let iamList=[];
             let passed=[];
             let failed=[];
+            // For each policy received from data, check the AttachedPolicies to check if the user has admin privileges
             for(let j=0;j<dataSet.length;j++){
                 let policies=dataSet[j].policies;
                 let AttachedPolicies= policies.AttachedPolicies; 
@@ -199,6 +210,7 @@ exports.iamUserswithAdminAccess = function(req, res) {
                 failed
             }
             resultObject.data = data
+            // return result object with list of IAM users with admin access, list of IAM users without admin access and list of all IAM users
             res.status(200).json(resultObject);
         })
     })
@@ -220,8 +232,9 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
+    // This gets the configuration details of all IAM users
     AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
-        if (err) {
+        if (err) { // To handle any errors during the service call and return error message
             log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
             resultObject.success = false
             resultObject.errorMessage = err.message
@@ -235,6 +248,7 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
             iamList.push(listOfIAMUsers[i].UserName);
         }
         const promises = [];
+        // For each IAM user, get the list of policies attacked to each user
         for(let i=0;i<listOfIAMUsers.length;i++){
             let userName=listOfIAMUsers[i].UserName;
             promises.push(new Promise(resolve=>AwsService.getAllAttachedPolicies(creds,listOfIAMUsers[i].UserName,function(err,data){
@@ -251,6 +265,7 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
             //let listOfUsers=[];
             let passed=[];
             let failed=[];
+            // For each policy received from data, check the AttachedPolicies to check if the user has policy edit access
             for(let j=0;j<dataSet.length;j++){
                 let policies=dataSet[j].policies;
                 let AttachedPolicies= policies.AttachedPolicies; 
@@ -272,6 +287,7 @@ exports.iamUserswithPolicyEditAccess = function(req, res) {
                 failed
             }
             resultObject.data = data
+            // return result object with list of IAM users with policy edit access, list of IAM users without policy edit access and list of all IAM users
             res.status(200).json(resultObject);
 
             
@@ -296,8 +312,9 @@ exports.unusedIamUsers = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
+    // This gets the configuration details of all IAM users
     AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
-        if (err) {
+        if (err) { // To handle any errors during the service call and return error message
             log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
             resultObject.success = false
             resultObject.errorMessage = err.message
@@ -306,6 +323,7 @@ exports.unusedIamUsers = function(req, res) {
         }
         log.info("All Users with Key More than 90 days old : " + JSON.stringify(listOfIAMUsers));
         let listOfIAMUsersWithKeyMoreThan90DaysOld=[];
+        // For each IAM user check the created date to see if it is older than 90 days
         for(let i=0;i<listOfIAMUsers.length;i++){
             let CreatedDate=new Date(listOfIAMUsers[i].CreateDate);
             let currentDate=new Date();
@@ -314,6 +332,7 @@ exports.unusedIamUsers = function(req, res) {
         }
         let listOfUnusedIAMUsers=new Set();
         const promises = [];
+        // For each IAM user older than 90 days get the list of all access keys associated with the user
         for(let i=0;i<listOfIAMUsersWithKeyMoreThan90DaysOld.length;i++){
             let userName=listOfIAMUsersWithKeyMoreThan90DaysOld[i];
             promises.push(new Promise(resolve=>AwsService.getAllAccessKeys(creds,userName,function(err,data){
@@ -329,6 +348,7 @@ exports.unusedIamUsers = function(req, res) {
             let iamList=[];
             let passed=[];
             let failed=[];
+            // For each access key received from data, check the AccessKeyMetadata parameter to determine if the user is active
             for(let j=0;j<dataSet.length;j++){
                 let detail=dataSet[j].details
                 let accessKeyMetadata=detail.AccessKeyMetadata
@@ -347,6 +367,7 @@ exports.unusedIamUsers = function(req, res) {
                 failed
             }
             resultObject.data = data
+            // return result object with list of active IAM users, list of inactive IAM users and list of all IAM users
             res.status(200).json(resultObject);
         })
         
@@ -368,8 +389,9 @@ exports.sshKeyRotationCheck = function(req, res) {
     log.info("Request Data: " + JSON.stringify(req.body))
     let resultObject = new Model.ResultObject();
 
+    // This gets the configuration details of all IAM users
     AwsService.getAllIAMUsersKeyInfo(creds,function(err,listOfIAMUsers){
-        if (err) {
+        if (err) { // To handle any errors during the service call and return error message
             log.error("Error Calling AwsService.getAllAmiIds: " + JSON.stringify(err));
             resultObject.success = false
             resultObject.errorMessage = err.message
@@ -378,6 +400,7 @@ exports.sshKeyRotationCheck = function(req, res) {
         }
         let listOfUsersWithSSHRotationKeyMoreThan90Days=new Set();
         const promises = [];
+        // For each existing IAM user, get the list of SSH public keys associated with the user
         for(let i=0;i<listOfIAMUsers.length;i++){
             let userName=listOfIAMUsers[i].UserName;
             promises.push(new Promise(resolve=>AwsService.getAllSSHAccessKeys(creds,userName,function(err,data){
@@ -393,6 +416,7 @@ exports.sshKeyRotationCheck = function(req, res) {
             let iamList=[];
             let passed=[];
             let failed=[];
+            // For each SSH public key received from the data, check the created date to determine whether it is older than 90 days
             for(let j=0;j<dataSet.length;j++){
                 let detail=dataSet[j].details;
                 let sshPublicKeys=detail.SSHPublicKeys;
@@ -423,6 +447,8 @@ exports.sshKeyRotationCheck = function(req, res) {
                 failed
             }
             resultObject.data = data
+            // return result object with list of users with SSH public keys created older than 90 days,
+            // list of users with SSH public keys created within 90 days and list of all IAM users
             res.status(200).json(resultObject);
 
         })
