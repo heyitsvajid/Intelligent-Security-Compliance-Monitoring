@@ -3,6 +3,10 @@ const Model = require('../model/resultObject.js');
 const AutoScalingService = require('../utility/autoScaling');
 const fileName = "Auto Scaling";
 
+
+/*
+Request serving the autoscaling groups, healthchecks
+*/
 let getAllAutoScaling = function(req, res){
     console.log(req.body);
     let resultObject = new Model.ResultObject();

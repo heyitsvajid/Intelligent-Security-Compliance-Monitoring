@@ -6,6 +6,12 @@ const creds = new AWS.Credentials({
     accessKeyId: process.env.AWSAccessKeyId, secretAccessKey: process.env.AWSSecretKey, sessionToken: null
     });
 
+/*
+"1. Get all the security groups for the region.
+2. For each security look for the groups having 22 and 3389 port open
+3.Look for open address (0.0.0.0/0) in the IP ranges of the security groups"
+*/
+
 let getAllSecurityGroups = function (params={},callback){
     let log = logger.getLogger(fileName + 'getAllSecurityGroups');
     log.info("Started");
@@ -24,7 +30,10 @@ let getAllSecurityGroups = function (params={},callback){
         callback(null, groups);
     });
 }
-
+/*
+@params groups - list of all security groups
+Filters groups for 22 and 3389 and looks for open ingress ports
+*/
 let validateSecurityGroups = function (groups){
     let warningGroups = [];
     let goodGroups = [];
@@ -32,7 +41,7 @@ let validateSecurityGroups = function (groups){
         let warningFound = false;
         for(let j=0; j<element.IpPermissions.length; j++){
             ipPermission = element.IpPermissions[j];
-            if(ipPermission.FromPort == 22 && ipPermission.ToPort == 22){
+            if((ipPermission.FromPort == 22 && ipPermission.ToPort == 22) ||(ipPermission.FromPort == 3389 && ipPermission.ToPort == 3389) ){
                 let ipRanges = ipPermission.IpRanges;
                 for(var i=0; i<ipRanges.length; i++){
                     if(ipRanges[i].CidrIp == openIp){
