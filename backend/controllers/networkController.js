@@ -3,6 +3,10 @@ const Model = require('../model/resultObject.js');
 const NetworkService = require('../utility/networkService');
 const fileName = "Network Controller: ";
 
+/*
+Request serving the ingress port checks for the security groups
+*/
+
 let getAllSecurityGroups = function(req, res){
     console.log(req.body);
     let resultObject = new Model.ResultObject();
